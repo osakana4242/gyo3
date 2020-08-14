@@ -24,11 +24,11 @@ namespace Osakana4242.Content {
 		public Vector2 GameSubSize => new Vector2(width_, subHeight_);
 
 		public void Calc() {
-			width_ = 320f;
+			width_ = Config.instance.screen.size.x;
 			scale_ = width_ / Screen.width;
 			height_ = width_ * Screen.height / Screen.width;
 
-			mainHeight_ = 240f;
+			mainHeight_ = Config.instance.screen.main.y;
 			subHeight_ = height_ - mainHeight_;
 		}
 

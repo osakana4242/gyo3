@@ -14,13 +14,12 @@ namespace Osakana4242.Content {
 		Vector2 pressPos_;
 		Vector3 anchorPos_;
 		Vector3 cpos0_;
-		Vector3 cpos_;
 		bool pressed_;
 		public bool hasShotInput;
 		public float shotInterval = 0.05f;
 		public float shotTime;
 
-		void UpdateShot() {
+		void UpdateShot(Chara chara) {
 			if (!hasShotInput) {
 				shotTime = 0f;
 				return;
@@ -30,15 +29,9 @@ namespace Osakana4242.Content {
 				shotTime += Time.deltaTime;
 			} else {
 				shotTime = 0f;
-				var go = new GameObject("blt");
-				GameObject.Instantiate(ResourceService.Instance.blt01Prefab, go.transform);
-				var blt = go.AddComponent<Bullet>();
-				blt.transform.position = cpos_ + new Vector3(0f, Random.Range(-2f, 2f), 0f);
-				blt.velocity = new Vector3(60f * 8, 0f, 0f);
-				var rb = go.AddComponent<Rigidbody>();
-				rb.isKinematic = true;
-				rb.useGravity = false;
-				go.transform.ForEachChildWithSelf_Ext(Main.Layer.PlayerBullet, (_tr, _layer) => _tr.gameObject.layer = _layer);
+				var blt = CharaFactory.CreateBullet();
+				Main.Instance.stage.charaBank.Add(blt);
+				blt.transform.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
 			}
 		}
 
@@ -81,7 +74,7 @@ namespace Osakana4242.Content {
 			return b;
 		}
 
-		void UpdateMove() {
+		void UpdateMove(Chara chara) {
 			inputHistory_.RemoveAll_Ext(Time.time - 2f, (_item, _time) => {
 				return _item.time < _time;
 			});
@@ -99,7 +92,7 @@ namespace Osakana4242.Content {
 			if (btn.isPressed) {
 				if (!pressed_) {
 					pressPos_ = Mouse.current.position.ReadValue();
-					anchorPos_ = cpos_;
+					anchorPos_ = chara.data.position;
 				}
 
 				var pos0 = Mouse.current.position.ReadValue();
@@ -108,44 +101,37 @@ namespace Osakana4242.Content {
 				var mouseDeltaFromStart = posCur - posStart;
 
 				var pos1 = anchorPos_ + (Vector3)(mouseDeltaFromStart);
-				cpos_ = pos1;
+				chara.data.position = pos1;
 			}
 
 			{
 				var otherB = Main.Instance.screenArea.bounds;
 				var ownC = GetComponentInChildren<Collider>();
 				var ownB = ownC.bounds;
-				ownB.center += cpos_ - cpos0_;
+				ownB.center += chara.data.position - cpos0_;
 
 				if (ownB.min.x < otherB.min.x) {
-					cpos_.x += otherB.min.x - ownB.min.x;
+					chara.data.position.x += otherB.min.x - ownB.min.x;
 				} else if (otherB.max.x < ownB.max.x) {
-					cpos_.x += otherB.max.x - ownB.max.x;
+					chara.data.position.x += otherB.max.x - ownB.max.x;
 				}
 
 				if (ownB.min.y < otherB.min.y) {
-					cpos_.y += otherB.min.y - ownB.min.y;
+					chara.data.position.y += otherB.min.y - ownB.min.y;
 				} else if (otherB.max.y < ownB.max.y) {
-					cpos_.y += otherB.max.y - ownB.max.y;
+					chara.data.position.y += otherB.max.y - ownB.max.y;
 				}
 			}
 
 			pressed_ = btn.isPressed;
 		}
 
-		void FixedUpdate() {
-			cpos_ = transform.position;
-			cpos0_ = cpos_;
+		public void ManualUpdate(Chara chara) {
+			cpos0_ = chara.data.position;
 
-			UpdateShot();
-			UpdateMove();
-			ApplyTransform();
+			UpdateShot(chara);
+			UpdateMove(chara);
+			transform.position = chara.data.position;
 		}
-
-		void ApplyTransform() {
-			transform.position = cpos_;
-		}
-
-
 	}
 }

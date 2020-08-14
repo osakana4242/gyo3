@@ -24,6 +24,12 @@ namespace Osakana4242.SystemExt {
 namespace Osakana4242.UnityEngineExt {
 	using UnityEngine;
 
+	public static class Vector3Ext {
+		public static Vector3 ToXY0_Ext(this in Vector3 self) {
+			return new Vector3(self.x, self.y, 0f);
+		}
+	}
+
 	public static class TransformExt {
 		public static void ForEachChildWithSelf_Ext<T>(this Transform self, T prm, System.Action<Transform, T> func) {
 			self.ForEachChild_Ext(prm, func);
