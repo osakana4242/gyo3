@@ -25,42 +25,6 @@ namespace Osakana4242.Content {
 			}
 		}
 
-		static void UpdateEnemy1(Chara self) {
-			const float shot1 = 1f;
-			const float shot2 = 1.5f;
-			var preTime = self.data.stateTime;
-			self.data.stateTime = Stage.Current.time.time - self.data.spawnedTime;
-
-			if (IsEnterTime(shot1, preTime, self.data.stateTime)) {
-				ShotToPlayer(self);
-			}
-
-			if (IsEnterTime(shot2, preTime, self.data.stateTime)) {
-				ShotToPlayer(self);
-			}
-		}
-
-		static void ShotToPlayer(Chara self) {
-			var blt = CharaFactory.CreateBullet2();
-			Stage.Current.charaBank.Add(blt);
-
-			blt.transform.position = self.transform.position;
-			Vector3 target;
-			if (Stage.Current.charaBank.TryGetPlayer(out var player)) {
-				target = player.data.position;
-			} else {
-				target = self.data.position + self.data.rotation * Vector3.forward;
-			}
-			Vector3 toTarget = (target - blt.transform.position).ToXY0_Ext();
-			blt.data.velocity = toTarget.normalized * 60f;
-			blt.data.rotation = Quaternion.LookRotation(toTarget);
-			blt.transform.rotation = Quaternion.Euler(0f, 0f, 180f + blt.data.rotation.eulerAngles.x);
-		}
-
-		static bool IsEnterTime(float target, float pre, float current) {
-			return pre < target && target <= current;
-		}
-
 		public void ManualUpdate() {
 			data.position = transform.position;
 			if (data.spawnedTime <= 0f) {
@@ -69,7 +33,10 @@ namespace Osakana4242.Content {
 
 			switch (data.aiName) {
 				case "enemy_1":
-				UpdateEnemy1(this);
+				CharaAI.UpdateEnemy1(this);
+				break;
+				case "enemy_2":
+				CharaAI.UpdateEnemy2(this);
 				break;
 			}
 
@@ -91,8 +58,23 @@ namespace Osakana4242.Content {
 			ApplyTransform();
 		}
 
-		void ApplyTransform() {
+		public void ApplyTransform() {
 			transform.position = data.position;
+			var euler = data.rotation.eulerAngles;
+			// 画像は右向きを基準にしてる.
+			// 0: 奥
+			// 90: 右
+			// 180: 手前
+			// 270: 左
+			var flipX = 180f <= euler.y && euler.y < 360f;
+
+			var scale = transform.localScale;
+			scale.x = Mathf.Abs(scale.x) * (flipX ? -1f : 1f);
+			transform.localScale = scale;
+
+			var rot = Quaternion.Euler(0f, 0f, euler.x);
+
+			transform.localRotation = rot;
 		}
 
 

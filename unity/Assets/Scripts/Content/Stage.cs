@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
+using Osakana4242.UnityEnginUtil;
 
 namespace Osakana4242.Content {
 	[System.Serializable]
@@ -52,14 +53,17 @@ namespace Osakana4242.Content {
 			public int CreateId() => ++autoIncrement;
 			int playerId;
 			public void Add(Chara chara) {
+				chara.gameObject.SetActive(false);
 				listAdd.Add(chara);
 			}
 
 			void Add_(Chara chara) {
-					dict.Add(chara.data.id, chara);
-					if (chara.data.layer == Layer.Player) {
-						playerId = chara.data.id;
-					}
+				dict.Add(chara.data.id, chara);
+				chara.gameObject.SetActive(true);
+				chara.ApplyTransform();
+				if (chara.data.layer == Layer.Player) {
+					playerId = chara.data.id;
+				}
 			}
 
 			public void FixAdd() {
@@ -92,19 +96,42 @@ namespace Osakana4242.Content {
 			}
 		}
 
+		[System.Serializable]
 		public class Wave {
+			public float startTime;
 			public float time;
-			public float interval = 0.5f;
+			public WaveData data;
+
 			public void Update() {
-				if (time < interval) {
-					time += Time.deltaTime;
-				} else {
-					time = 0f;
-					var enemy = CharaFactory.CreateEnemy();
+				if (startTime == 0f) {
+					startTime = Stage.Current.time.time;
+				}
+				var preTime = time;
+				time = Stage.Current.time.time - startTime;
+
+				for (int i = 0, iCount = data.eventList.Length; i < iCount; ++i) {
+					var row = data.eventList[i];
+					if (!TimeEventData.TryGetEvent(row.startTime / 1000f, 0f, preTime, time, out var eventData)) continue;
+					var pos = row.position * 16f;
+					var enemy = CharaFactory.CreateEnemy(row.enemyName);
+					enemy.data.position = pos;
+					var vec = Vector2Util.FromDeg(row.angle);
+					enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
+					enemy.data.velocity = enemy.data.rotation * Vector3.forward;
+
 					Main.Instance.stage.charaBank.Add(enemy);
 				}
 			}
 		}
+	}
+
+	[System.Serializable]
+	public class WaveEventData {
+		public float startTime;
+		public string enemyName;
+		public Vector2 position;
+		// 0: 右, 90 下, 180: 左, 270: 上
+		public float angle;
 	}
 
 	[System.Serializable]
@@ -117,4 +144,46 @@ namespace Osakana4242.Content {
 			this.time += dt;
 		}
 	}
+
+	public enum TimeEventType {
+		None,
+		Enter,
+		Loop,
+		Exit,
+	}
+
+	public struct TimeEventData {
+		public TimeEventType type;
+		public float progress;
+		public float time;
+
+		public static bool TryGetEvent(float startTime, float duration, float preTime, float currentTime, out TimeEventData evtData) {
+			evtData = new TimeEventData();
+			evtData.type = TimeEventType.None;
+			float left = startTime;
+			float right = left + duration;
+			if (currentTime < left) {
+				return false;
+			}
+			if (right <= preTime) {
+				return false;
+			}
+			if (preTime < left && left <= currentTime) {
+				evtData.type = TimeEventType.Enter;
+				return true;
+			}
+			if (preTime < right && right <= currentTime) {
+				evtData.type = TimeEventType.Exit;
+				evtData.time = duration;
+				evtData.progress = 1f;
+				return true;
+			}
+			evtData.type = TimeEventType.Loop;
+			evtData.time = currentTime - startTime;
+			evtData.progress = evtData.time / duration;
+			return true;
+		}
+	}
+
+
 }

@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9d2e4a0f4b5364199b078493b2b607, type: 3}
+  m_Name: WaveData
+  m_EditorClassIdentifier: 
+  eventList:
+  - startTime: 2000
+    enemyName: enemy_1
+    position: {x: 5, y: 3}
+    angle: 180
+  - startTime: 3000
+    enemyName: enemy_1
+    position: {x: 5, y: 3}
+    angle: 180
+  - startTime: 4000
+    enemyName: enemy_1
+    position: {x: 5, y: 3}
+    angle: 180
+  - startTime: 7000
+    enemyName: enemy_1
+    position: {x: 5, y: -3}
+    angle: 180
+  - startTime: 8000
+    enemyName: enemy_1
+    position: {x: 5, y: -3}
+    angle: 180
+  - startTime: 9000
+    enemyName: enemy_1
+    position: {x: 5, y: -3}
+    angle: 180
+  - startTime: 11000
+    enemyName: enemy_1
+    position: {x: 5, y: 2}
+    angle: 180
+  - startTime: 11500
+    enemyName: enemy_1
+    position: {x: 5, y: 1}
+    angle: 180
+  - startTime: 12000
+    enemyName: enemy_1
+    position: {x: 5, y: 0}
+    angle: 180
+  - startTime: 14000
+    enemyName: enemy_1
+    position: {x: 5, y: -2}
+    angle: 180
+  - startTime: 14500
+    enemyName: enemy_1
+    position: {x: 5, y: -1}
+    angle: 180
+  - startTime: 15000
+    enemyName: enemy_1
+    position: {x: 5, y: 0}
+    angle: 180
+  - startTime: 17000
+    enemyName: enemy_1
+    position: {x: 5, y: -5}
+    angle: 140
+  - startTime: 18000
+    enemyName: enemy_1
+    position: {x: 4, y: -5}
+    angle: 140
+  - startTime: 19000
+    enemyName: enemy_1
+    position: {x: 3, y: -5}
+    angle: 140
+  - startTime: 21000
+    enemyName: enemy_1
+    position: {x: 5, y: 5}
+    angle: 230
+  - startTime: 22000
+    enemyName: enemy_1
+    position: {x: 4, y: 5}
+    angle: 230
+  - startTime: 23000
+    enemyName: enemy_1
+    position: {x: 3, y: 5}
+    angle: 230
+  - startTime: 26000
+    enemyName: enemy_2
+    position: {x: 5, y: 0}
+    angle: 180
+

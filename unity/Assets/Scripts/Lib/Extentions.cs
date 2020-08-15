@@ -21,6 +21,19 @@ namespace Osakana4242.SystemExt {
 	}
 }
 
+namespace Osakana4242.UnityEnginUtil {
+	using UnityEngine;
+	public static class Vector2Util {
+		public static Vector2 FromDeg(float deg) {
+			var rad = (deg % 360f) * Mathf.Deg2Rad;
+			return new Vector2(
+				Mathf.Cos(rad),
+				Mathf.Sin(rad)
+			);
+		}
+	}
+}
+
 namespace Osakana4242.UnityEngineExt {
 	using UnityEngine;
 
@@ -44,4 +57,7 @@ namespace Osakana4242.UnityEngineExt {
 			}
 		}
 	}
+
+
+
 }

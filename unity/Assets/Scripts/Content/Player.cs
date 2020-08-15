@@ -30,8 +30,8 @@ namespace Osakana4242.Content {
 			} else {
 				shotTime = 0f;
 				var blt = CharaFactory.CreateBullet();
+				blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
 				Main.Instance.stage.charaBank.Add(blt);
-				blt.transform.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
 			}
 		}
 

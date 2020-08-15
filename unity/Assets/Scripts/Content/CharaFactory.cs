@@ -74,19 +74,37 @@ namespace Osakana4242.Content {
 		}
 
 		public static Chara CreateEnemy() {
+			return CreateEnemy("enemy_1");
+		}
+
+		public static Chara CreateEnemy(string aiName) {
 			var go = new GameObject("enemy");
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Enemy;
-			chara.data.hp = chara.data.hpMax = 1;
+			float hpMax;
+			GameObject prefab;
+			switch (aiName) {
+				default:
+				case "enemy_1":
+				prefab = ResourceService.Instance.enm01Prefab;
+				hpMax = 1;
+				break;
+
+				case "enemy_2":
+				prefab = ResourceService.Instance.ply01Prefab;
+				hpMax = 20;
+				break;
+			}
+			chara.data.hp = chara.data.hpMax = hpMax;
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = true;
-			chara.data.aiName = "enemy_1";
+			chara.data.aiName = aiName;
 			go.name = "enemy_" + chara.data.id;
 			chara.data.rotation = Quaternion.LookRotation(Vector3.left);
 			chara.data.velocity = chara.data.rotation * Vector3.forward * SpeedByScreen(0.25f);
 
-			GameObject.Instantiate(ResourceService.Instance.enm01Prefab, go.transform);
+			GameObject.Instantiate(prefab, go.transform);
 
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = false;
