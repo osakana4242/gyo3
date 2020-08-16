@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
 
 namespace Osakana4242.Content {
@@ -38,6 +39,10 @@ namespace Osakana4242.Content {
 			if ( !initialzied_ ) return;
 			CollisionService.Instance.Update();
 			stage.Update();
+		}
+
+		void Update() {
+			ScreenService.Instance.AdjustIfNeeded();
 		}
 	}
 }
