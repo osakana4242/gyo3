@@ -23,6 +23,7 @@ namespace Osakana4242.Content {
 		public void Init() {
 			var player = CharaFactory.CreatePlayer();
 			Main.Instance.stage.charaBank.Add(player);
+			wave.Init();
 		}
 
 		public void Update() {
@@ -99,19 +100,32 @@ namespace Osakana4242.Content {
 		[System.Serializable]
 		public class Wave {
 			public float startTime;
-			public float time;
 			public WaveData data;
 
-			public void Update() {
-				if (startTime == 0f) {
+			public float debugStartTime;
+			public float debugLoopDuration;
+
+			public void Init() {
 					startTime = Stage.Current.time.time;
+			}
+
+			public void Update() {
+				if (0 < debugStartTime) {
+					if (Stage.Current.time.time < debugStartTime) {
+						Stage.Current.time.time = debugStartTime;
+					}
+
+					if (debugStartTime + debugLoopDuration < Stage.Current.time.time) {
+						Stage.Current.time.time = debugStartTime;
+					}
 				}
-				var preTime = time;
-				time = Stage.Current.time.time - startTime;
+
+				var preTime = Stage.Current.time.preTime;
+				var time = Stage.Current.time.time;
 
 				for (int i = 0, iCount = data.eventList.Length; i < iCount; ++i) {
 					var row = data.eventList[i];
-					if (!TimeEventData.TryGetEvent(row.startTime / 1000f, 0f, preTime, time, out var eventData)) continue;
+					if (!TimeEventData.TryGetEvent(startTime + (row.startTime / 1000f), 0f, preTime, time, out var eventData)) continue;
 					var pos = row.position * 16f;
 					var enemy = CharaFactory.CreateEnemy(row.enemyName);
 					enemy.data.position = pos;
@@ -138,6 +152,8 @@ namespace Osakana4242.Content {
 	public class StageTime {
 		public float time;
 		public float dt;
+
+		public float preTime => time - dt;
 
 		public void Update(float dt) {
 			this.dt = dt;

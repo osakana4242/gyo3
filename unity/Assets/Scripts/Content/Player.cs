@@ -12,6 +12,7 @@ namespace Osakana4242.Content {
 		}
 
 		Vector2 pressPos_;
+		Vector2 pointerPrePos_;
 		Vector3 anchorPos_;
 		Vector3 cpos0_;
 		bool pressed_;
@@ -80,27 +81,43 @@ namespace Osakana4242.Content {
 			});
 			inputHistory_.Add(new InputItem() {
 				time = Time.time,
-				dir = Mouse.current.leftButton.isPressed ?
-					Mouse.current.delta.ReadValue().normalized :
+				dir = Pointer.current.press.isPressed ?
+					Pointer.current.delta.ReadValue().normalized :
 					Vector2.zero
 			});
 			hasShotInput = CheckShotInput(inputHistory_);
 
 
-
-			var btn = Mouse.current.leftButton;
+			var btn = Pointer.current.press;
 			if (btn.isPressed) {
 				if (!pressed_) {
-					pressPos_ = Mouse.current.position.ReadValue();
+					pressPos_ = Pointer.current.position.ReadValue();
 					anchorPos_ = chara.data.position;
+					pointerPrePos_ = pressPos_;
 				}
-
-				var pos0 = Mouse.current.position.ReadValue();
+				var prePos = pointerPrePos_;
+				pointerPrePos_ = Pointer.current.position.ReadValue();
+				var pos0 = pointerPrePos_;;
 				var posStart = ScreenService.Instance.Convert(pressPos_, Main.Instance.camera);
+				var localPrePos = ScreenService.Instance.Convert(prePos, Main.Instance.camera);
 				var posCur = ScreenService.Instance.Convert(pos0, Main.Instance.camera);
+				var deltaFromPre = posCur - localPrePos;
 				var mouseDeltaFromStart = posCur - posStart;
 
+				var marginY = ScreenService.Instance.GameMainSize.y;
+				// var marginX = 32f;
+				var pressDelta = (Vector2)anchorPos_ - posStart;
+				Debug.Log("pressDelta: " + pressDelta);
+				if (pressDelta.y < marginY) {
+					if (deltaFromPre.y < 0f) {
+						anchorPos_.y -= Mathf.Clamp(deltaFromPre.y, -marginY, marginY);
+					}
+				}
+
 				var pos1 = anchorPos_ + (Vector3)(mouseDeltaFromStart);
+
+
+
 				chara.data.position = pos1;
 			}
 
@@ -111,15 +128,23 @@ namespace Osakana4242.Content {
 				ownB.center += chara.data.position - cpos0_;
 
 				if (ownB.min.x < otherB.min.x) {
-					chara.data.position.x += otherB.min.x - ownB.min.x;
+					var delta = otherB.min.x - ownB.min.x;
+					chara.data.position.x += delta;
+					anchorPos_.x += delta;
 				} else if (otherB.max.x < ownB.max.x) {
-					chara.data.position.x += otherB.max.x - ownB.max.x;
+					var delta = otherB.max.x - ownB.max.x;
+					chara.data.position.x += delta;
+					anchorPos_.x += delta;
 				}
 
 				if (ownB.min.y < otherB.min.y) {
-					chara.data.position.y += otherB.min.y - ownB.min.y;
+					var delta = otherB.min.y - ownB.min.y;
+					chara.data.position.y += delta;
+					anchorPos_.y += delta;
 				} else if (otherB.max.y < ownB.max.y) {
-					chara.data.position.y += otherB.max.y - ownB.max.y;
+					var delta = otherB.max.y - ownB.max.y;
+					chara.data.position.y += delta;
+					anchorPos_.y += delta;
 				}
 			}
 
