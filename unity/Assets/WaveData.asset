@@ -85,8 +85,40 @@ MonoBehaviour:
     enemyName: enemy_1
     position: {x: 3, y: 5}
     angle: 230
-  - startTime: 26000
+  - startTime: 26000 # Ç≈Ç©Ç¢Ç‚Ç¬
     enemyName: enemy_2
     position: {x: 5, y: 0}
     angle: 180
+  - startTime: 31000
+    enemyName: enemy_2
+    position: {x: 5, y: 2}
+    angle: 180
+  - startTime: 35000
+    enemyName: enemy_2
+    position: {x: 5, y: -2}
+    angle: 180
+  - startTime: 38000 # è„Ç©ÇÁ
+    enemyName: enemy_1
+    position: {x: 5, y: -5}
+    angle: 140
+  - startTime: 39000
+    enemyName: enemy_1
+    position: {x: 4, y: -5}
+    angle: 140
+  - startTime: 40000
+    enemyName: enemy_1
+    position: {x: 3, y: -5}
+    angle: 140
+  - startTime: 38000 # â∫Ç©ÇÁ
+    enemyName: enemy_1
+    position: {x: 5, y: 5}
+    angle: 230
+  - startTime: 39000
+    enemyName: enemy_1
+    position: {x: 4, y: 5}
+    angle: 230
+  - startTime: 40000
+    enemyName: enemy_1
+    position: {x: 3, y: 5}
+    angle: 230
 
