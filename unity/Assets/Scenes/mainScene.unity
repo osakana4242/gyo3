@@ -477,6 +477,7 @@ MonoBehaviour:
   camera: {fileID: 963194227}
   bulletAliveArea: {fileID: 944617879}
   screenArea: {fileID: 1469556375}
+  resourceData: {fileID: 11400000, guid: a7395f0f834a4ab4a85b27e1c0a76ced, type: 2}
   stage:
     wave:
       startTime: 0

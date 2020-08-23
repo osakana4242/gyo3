@@ -10,6 +10,7 @@ namespace Osakana4242.Content {
 		[SerializeField] public new Camera camera;
 		[SerializeField] public BoxCollider bulletAliveArea;
 		[SerializeField] public BoxCollider screenArea;
+		[SerializeField] public ResourceData resourceData;
 		public Stage stage = new Stage();
 
 		void Awake() {

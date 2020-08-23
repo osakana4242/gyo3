@@ -8,7 +8,7 @@ namespace Osakana4242.Content {
 	public class CharaFactory {
 		public static Chara CreatePlayer() {
 			var go = new GameObject("player");
-			GameObject.Instantiate(ResourceService.Instance.ply01Prefab, go.transform);
+			GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.PLY_01_PREFAB), go.transform);
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Player;
@@ -41,7 +41,7 @@ namespace Osakana4242.Content {
 			go.name = "blt_" + chara.data.id;
 
 
-			GameObject.Instantiate(ResourceService.Instance.blt01Prefab, go.transform);
+			GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.BLT_01_PREFAB), go.transform);
 
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = true;
@@ -63,7 +63,7 @@ namespace Osakana4242.Content {
 			go.name = "blt_" + chara.data.id;
 
 
-			GameObject.Instantiate(ResourceService.Instance.blt02Prefab, go.transform);
+			GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.BLT_02_PREFAB), go.transform);
 
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = true;
@@ -87,12 +87,12 @@ namespace Osakana4242.Content {
 			switch (aiName) {
 				default:
 				case "enemy_1":
-				prefab = ResourceService.Instance.enm01Prefab;
+				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.ENM_01_PREFAB);
 				hpMax = 1;
 				break;
 
 				case "enemy_2":
-				prefab = ResourceService.Instance.ply01Prefab;
+				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.PLY_01_PREFAB);
 				hpMax = 20;
 				break;
 			}

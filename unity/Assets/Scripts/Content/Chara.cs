@@ -20,7 +20,7 @@ namespace Osakana4242.Content {
 			if (0 < data.hp) return;
 			GameObject.Destroy(gameObject);
 			if (data.hasBlast) {
-				var eft1 = GameObject.Instantiate(ResourceService.Instance.eftBlast01Prefab, gameObject.transform.position, Quaternion.identity);
+				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>("eft_blast_01.prefab"), gameObject.transform.position, Quaternion.identity);
 				GameObject.Destroy(eft1, 1f);
 			}
 		}
