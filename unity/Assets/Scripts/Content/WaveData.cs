@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEnginUtil;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Osakana4242.Content {
 	[System.Serializable]
@@ -47,5 +50,77 @@ namespace Osakana4242.Content {
 			}
 			return list.ToArray();
 		}
+
+#if UNITY_EDITOR
+		[CustomPropertyDrawer(typeof(WaveEventData))]
+		public class WaveEventDataDrawer : PropertyDrawer {
+			public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+				// https://docs.unity3d.com/ja/current/ScriptReference/PropertyDrawer.html
+
+				WaveEventData model = default;
+				using (new EditorGUI.PropertyScope(position, label, property)) {
+					position.height = EditorGUIUtility.singleLineHeight;
+
+					if (property.isExpanded) {
+						property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+					} else {
+						var pos1 = new Rect(position.x + position.width * 0.5f * 0, position.y, position.width * 0.5f, position.height);
+						var pos2 = new Rect(position.x + position.width * 0.5f * 1, position.y, position.width * 0.5f, position.height);
+						property.isExpanded = EditorGUI.Foldout(pos1, property.isExpanded, label);
+						EditorGUI.PropertyField(pos2, property.FindPropertyRelative(nameof(model.startTime)), GUIContent.none);
+					}
+					position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+					if (property.isExpanded) {
+						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.startTime)));
+						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.enemyName)));
+						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.position)));
+						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.angle)));
+						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+					}
+				}
+			}
+
+			public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+				return property.isExpanded ?
+					(EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 5f :
+					EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+			}
+		}
+
+		[CustomEditor(typeof(WaveData))]
+		public class Inspector : UnityEditor.Editor {
+
+			WaveEventData copied;
+			ListEditor<WaveEventData> listEditor = new ListEditor<WaveEventData>() {
+				GetElementFunc = (_a, _b) => {
+					return ((WaveData)_a.serializedObject.targetObject).eventList[_b];
+				},
+				SetElementFunc = (_a, _b, _c) => {
+					((WaveData)_a.serializedObject.targetObject).eventList[_b] = _c;
+				},
+			};
+
+			static T CloneObject<T>(T obj) {
+				var json = JsonUtility.ToJson(obj);
+				var t = JsonUtility.FromJson<T>(json);
+				return t;
+			}
+
+			public override void OnInspectorGUI() {
+				base.DrawDefaultInspector();
+				this.serializedObject.Update();
+
+				var target = (WaveData)this.serializedObject.targetObject;
+				var spEventList = this.serializedObject.FindProperty(nameof(target.eventList));
+				listEditor.DrawGUI(spEventList);
+
+				this.serializedObject.ApplyModifiedProperties();
+			}
+		}
+#endif
 	}
 }
