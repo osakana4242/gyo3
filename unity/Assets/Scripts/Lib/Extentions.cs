@@ -25,6 +25,12 @@ namespace Osakana4242.UnityEnginUtil {
 	using UnityEngine;
 	public static class Vector2Util {
 		public static Vector2 FromDeg(float deg) {
+			switch (deg) {
+				case 0f: return new Vector2(1, 0f);
+				case 90f: return new Vector2(0, 1f);
+				case 180f: return new Vector2(-1, 0f);
+				case 270f: return new Vector2(0, -1f);
+			}
 			var rad = (deg % 360f) * Mathf.Deg2Rad;
 			return new Vector2(
 				Mathf.Cos(rad),
