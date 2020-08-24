@@ -11,6 +11,7 @@ namespace Osakana4242.Content {
 	[System.Serializable]
 	public class WaveData : ScriptableObject {
 		public WaveEventData[] eventList;
+
 		// 160, 120
 		// 16 * 10 = 160
 		// 16 * 8 = 128
@@ -61,13 +62,13 @@ namespace Osakana4242.Content {
 				using (new EditorGUI.PropertyScope(position, label, property)) {
 					position.height = EditorGUIUtility.singleLineHeight;
 
+					var pos21 = new Rect(position.x + position.width * 0.5f * 0, position.y, position.width * 0.5f, position.height);
+					var pos22 = new Rect(position.x + position.width * 0.5f * 1, position.y, position.width * 0.5f, position.height);
 					if (property.isExpanded) {
 						property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
 					} else {
-						var pos1 = new Rect(position.x + position.width * 0.5f * 0, position.y, position.width * 0.5f, position.height);
-						var pos2 = new Rect(position.x + position.width * 0.5f * 1, position.y, position.width * 0.5f, position.height);
-						property.isExpanded = EditorGUI.Foldout(pos1, property.isExpanded, label);
-						EditorGUI.PropertyField(pos2, property.FindPropertyRelative(nameof(model.startTime)), GUIContent.none);
+						property.isExpanded = EditorGUI.Foldout(pos21, property.isExpanded, label);
+						EditorGUI.PropertyField(pos22, property.FindPropertyRelative(nameof(model.startTime)), GUIContent.none);
 					}
 					position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
@@ -78,8 +79,14 @@ namespace Osakana4242.Content {
 						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.position)));
 						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.angle)));
-						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+						{
+							pos21.y = pos22.y = position.y;
+							var pAngle = property.FindPropertyRelative(nameof(model.angle));
+							EditorGUI.PropertyField(pos21, pAngle);
+							var vec = Vector2Util.FromDeg(pAngle.floatValue);
+							EditorGUI.Vector2Field(pos22, "", vec);
+							position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+						}
 					}
 				}
 			}
@@ -110,13 +117,37 @@ namespace Osakana4242.Content {
 				return t;
 			}
 
+			static System.Action<SerializedProperty, Inspector> drawHedaerFunc = (_spList, _self) => {
+				using (new EditorGUILayout.HorizontalScope()) {
+					System.Action<SerializedProperty, int, int, int> timeShiftFunc = (_pElem, _i1, _i2, _prm) => {
+						WaveEventData model = default;
+						_pElem.FindPropertyRelative(nameof(model.startTime)).floatValue += _prm;
+					};
+					EditorGUILayout.LabelField("startTime");
+
+					if (GUILayout.Button("<<")) {
+						_self.listEditor.ForEachSelected(_spList, -1000, timeShiftFunc);
+					}
+					if (GUILayout.Button("<")) {
+						_self.listEditor.ForEachSelected(_spList, -100, timeShiftFunc);
+					}
+					if (GUILayout.Button(">")) {
+						_self.listEditor.ForEachSelected(_spList, 100, timeShiftFunc);
+					}
+					if (GUILayout.Button(">>")) {
+						_self.listEditor.ForEachSelected(_spList, 1000, timeShiftFunc);
+					}
+				}
+			};
+
 			public override void OnInspectorGUI() {
 				base.DrawDefaultInspector();
 				this.serializedObject.Update();
 
 				var target = (WaveData)this.serializedObject.targetObject;
 				var spEventList = this.serializedObject.FindProperty(nameof(target.eventList));
-				listEditor.DrawGUI(spEventList);
+
+				listEditor.DrawGUI(spEventList, this, drawHedaerFunc);
 
 				this.serializedObject.ApplyModifiedProperties();
 			}
