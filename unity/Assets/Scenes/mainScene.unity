@@ -483,8 +483,8 @@ MonoBehaviour:
       startTime: 0
       data: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
       debugStartTime: 0.1
-      debugLoopDuration: 50
-      debugEnemyName: enemy_4
+      debugLoopDuration: 95
+      testEnemyIndex: 0
     time:
       time: 0
       dt: 0
