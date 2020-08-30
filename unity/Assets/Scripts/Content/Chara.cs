@@ -29,14 +29,24 @@ namespace Osakana4242.Content {
 			data.position = transform.position;
 			if (data.spawnedTime <= 0f) {
 				data.spawnedTime = Stage.Current.time.time;
+				data.spawnedPosition = data.position;
 			}
 
 			switch (data.aiName) {
+				case "enemy_test_rotation":
+				CharaAI.UpdateEnemyRotationTest(this);
+				break;
 				case "enemy_1":
 				CharaAI.UpdateEnemy1(this);
 				break;
 				case "enemy_2":
 				CharaAI.UpdateEnemy2(this);
+				break;
+				case "enemy_3":
+				CharaAI.UpdateEnemy3(this);
+				break;
+				case "enemy_4":
+				CharaAI.UpdateEnemy4(this);
 				break;
 			}
 
@@ -72,7 +82,17 @@ namespace Osakana4242.Content {
 			scale.x = Mathf.Abs(scale.x) * (flipX ? -1f : 1f);
 			transform.localScale = scale;
 
-			var rot = Quaternion.Euler(0f, 0f, euler.x);
+			// 右 z
+			// 90: 上
+			// 0: 正面
+			// -90: 下
+
+			// 左 z
+			// -90: 上
+			// 0: 正面
+			// 90: 下
+
+			var rot = Quaternion.Euler(0f, 0f, euler.x * (flipX ? 1f : -1f));
 
 			transform.localRotation = rot;
 		}

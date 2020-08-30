@@ -95,6 +95,11 @@ namespace Osakana4242.Content {
 				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.PLY_01_PREFAB);
 				hpMax = 20;
 				break;
+
+				case "enemy_3":
+				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.ENM_01_PREFAB);
+				hpMax = 1;
+				break;
 			}
 			chara.data.hp = chara.data.hpMax = hpMax;
 			chara.data.hasBlast = true;

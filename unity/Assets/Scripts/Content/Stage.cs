@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
-using Osakana4242.UnityEnginUtil;
+using Osakana4242.UnityEngineUtil;
 
 namespace Osakana4242.Content {
 	[System.Serializable]
@@ -91,9 +91,20 @@ namespace Osakana4242.Content {
 				listCache.Clear();
 			}
 
-			public Chara TryGetPlayer(out Chara chara) {
-				dict.TryGetValue(playerId, out chara);
-				return chara;
+			public bool TryGetPlayer(out Chara chara) {
+				return dict.TryGetValue(playerId, out chara);
+			}
+
+			public bool TryGetEnemy(out Chara chara) {
+				foreach (var kv in dict) {
+					var item = kv.Value;
+					if (item.data.layer == Layer.Enemy) {
+						chara = item;
+						return true;
+					}
+				}
+				chara = null;
+				return false;
 			}
 		}
 
@@ -104,12 +115,18 @@ namespace Osakana4242.Content {
 
 			public float debugStartTime;
 			public float debugLoopDuration;
+			public Config.TestEnemyWave testEnemy => Config.instance.testEnemy;
+			public int testEnemyIndex;
 
 			public void Init() {
-					startTime = Stage.Current.time.time;
+				startTime = Stage.Current.time.time;
 			}
 
 			public void Update() {
+				if (testEnemy.enabled) {
+					UpdateTestEnemy();
+					return;
+				}
 				if (0 < debugStartTime) {
 					if (Stage.Current.time.time < debugStartTime) {
 						Stage.Current.time.time = debugStartTime;
@@ -125,6 +142,7 @@ namespace Osakana4242.Content {
 
 				for (int i = 0, iCount = data.eventList.Length; i < iCount; ++i) {
 					var row = data.eventList[i];
+					if (row.type == WaveEventType.None) continue;
 					if (!TimeEventData.TryGetEvent(startTime + (row.startTime / 1000f), 0f, preTime, time, out var eventData)) continue;
 					var pos = row.position * 16f;
 					var enemy = CharaFactory.CreateEnemy(row.enemyName);
@@ -136,16 +154,38 @@ namespace Osakana4242.Content {
 					Main.Instance.stage.charaBank.Add(enemy);
 				}
 			}
+
+			public void UpdateTestEnemy() {
+				if (!Stage.Current.charaBank.TryGetEnemy(out var enemy)) {
+					enemy = CharaFactory.CreateEnemy(testEnemy.enemyName);
+					enemy.data.position = testEnemy.positionList[testEnemyIndex];
+					enemy.data.rotation = Quaternion.LookRotation(new Vector2(-1f, 0f));
+					Main.Instance.stage.charaBank.Add(enemy);
+					testEnemyIndex = (testEnemyIndex + 1) % testEnemy.positionList.Length; ;
+				}
+			}
+
+
 		}
+	}
+
+	public enum WaveEventType {
+		None = 0,
+		Spawn = 1,
 	}
 
 	[System.Serializable]
 	public class WaveEventData {
+		public WaveEventType type;
 		public float startTime;
+		public string comment;
 		public string enemyName;
-		public Vector2 position;
+		public float positionX;
+		public float positionY;
 		// 0: 右, 90 下, 180: 左, 270: 上
 		public float angle;
+		
+		public Vector2 position => new Vector2(positionX, positionY);
 	}
 
 	[System.Serializable]

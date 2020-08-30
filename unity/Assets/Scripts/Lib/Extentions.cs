@@ -1,6 +1,13 @@
 using System.Collections.Generic;
 
 namespace Osakana4242.SystemExt {
+	public static class EnumUtil<T> {
+		public static readonly T[] valueList = (T[])System.Enum.GetValues(typeof(T));
+		public static T GetValueAt(int index) {
+			return valueList[index];
+		}
+	}
+
 	public static class IListExt {
 		public static int FindIndex_Ext<T1, T2>(this IReadOnlyList<T1> self, T2 prm, System.Func<T1, T2, bool> matcher) {
 			for (int i = 0, iCount = self.Count; i < iCount; ++i) {
@@ -21,8 +28,9 @@ namespace Osakana4242.SystemExt {
 	}
 }
 
-namespace Osakana4242.UnityEnginUtil {
+namespace Osakana4242.UnityEngineUtil {
 	using UnityEngine;
+	using Osakana4242.UnityEngineExt;
 	public static class Vector2Util {
 		public static Vector2 FromDeg(float deg) {
 			switch (deg) {
@@ -37,11 +45,27 @@ namespace Osakana4242.UnityEnginUtil {
 				Mathf.Sin(rad)
 			);
 		}
+
+		public static Vector2 MoveTowardsByAngle(Vector2 vec, Vector2 toTargetVec, float maxDeltaAngle) {
+			var right = new Vector2(1f, 0f);
+			var a1 = vec.ToAngle_Ext();
+			var a2 = toTargetVec.ToAngle_Ext();
+			var a3 = Mathf.MoveTowardsAngle(a1, a2, maxDeltaAngle);
+			var v = Vector2Util.FromDeg(a3);
+			return v;
+		}
+
 	}
 }
 
 namespace Osakana4242.UnityEngineExt {
 	using UnityEngine;
+
+	public static class Vector2Ext {
+		public static float ToAngle_Ext(this in Vector2 self) {
+			return Mathf.Atan2(self.y, self.x) * Mathf.Rad2Deg;
+		}
+	}
 
 	public static class Vector3Ext {
 		public static Vector3 ToXY0_Ext(this in Vector3 self) {

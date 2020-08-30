@@ -482,8 +482,9 @@ MonoBehaviour:
     wave:
       startTime: 0
       data: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
-      debugStartTime: 10
-      debugLoopDuration: 40
+      debugStartTime: 0.1
+      debugLoopDuration: 50
+      debugEnemyName: enemy_4
     time:
       time: 0
       dt: 0

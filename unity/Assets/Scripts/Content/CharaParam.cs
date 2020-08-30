@@ -23,6 +23,7 @@ namespace Osakana4242.Content {
 		public int ownerCharaId;
 		public string aiName;
 		public float spawnedTime;
+		public Vector3 spawnedPosition;
 		public float stateTime = -1f;
 		public int state;
 	}
