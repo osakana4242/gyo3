@@ -73,7 +73,7 @@ namespace Osakana4242.Content {
 							}
 						}
 
-						if (GUILayout.Button("C")) {
+						if (GUILayout.Button("Copy")) {
 							Copy(spList);
 						}
 						if (GUILayout.Button("Cut")) {
@@ -127,6 +127,7 @@ namespace Osakana4242.Content {
 				using (var scope = new EditorGUILayout.ScrollViewScope(scrollPos, GUILayout.Height(scrollHeight))) {
 					var spos = scrollPos;
 					if (scrollPos != scope.scrollPosition) {
+						EditorGUI.FocusTextInControl( null );
 						scrollPos = scope.scrollPosition;
 						if (Event.current.type != EventType.Repaint) {
 							spos = scrollPos;
@@ -134,7 +135,12 @@ namespace Osakana4242.Content {
 					}
 					var posY = 0f;
 					var skipY = 0f;
+					Color bg0 = GUI.backgroundColor;
+					Color bg1 = new Color(0.95f, 0.95f, 1.00f, 1f);
+					Color bg2 = new Color(0.95f, 1.00f, 0.95f, 1f);
+
 					for (int i = 0, iCount = spList.arraySize; i < iCount; ++i) {
+						GUI.backgroundColor = ((i & 0x1) == 0) ? bg1 : bg2;
 						var spElement = spList.GetArrayElementAtIndex(i);
 						var item = list[i];
 						var elemHeight = item.cachedHeight;
@@ -231,6 +237,8 @@ namespace Osakana4242.Content {
 							posY += elemHeight;
 						}
 					}
+					GUI.backgroundColor = bg0;
+
 					if (0f < skipY) {
 						using (new EditorGUILayout.HorizontalScope(GUI.skin.box, GUILayout.Height(skipY))) {
 							EditorGUILayout.LabelField("|");

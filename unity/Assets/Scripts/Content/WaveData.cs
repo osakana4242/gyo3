@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
-using Osakana4242.UnityEnginUtil;
+using Osakana4242.UnityEngineUtil;
+using Osakana4242.SystemExt;
+using Osakana4242.Lib;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -12,96 +15,100 @@ namespace Osakana4242.Content {
 	public class WaveData : ScriptableObject {
 		public WaveEventData[] eventList;
 
-		// 160, 120
-		// 16 * 10 = 160
-		// 16 * 8 = 128
-		// 16 * 9 = 144
-		// center = 0, 0
-		// spawn right = 5, 0
-		// spawn left = -5, 0
-		// spawn top = 0, 5
-		// spawn bottom = 0, -5
-		// 
-		public static WaveEventData[] hoge() {
-			object[] data = {
-				 3000, "enemy1", 5,  3, 180,
-				 3500, "enemy1", 5,  3, 180,
-				 4000, "enemy1", 5,  3, 180,
-				 4500, "enemy1", 5,  3, 180,
-
-				 6000, "enemy1", 5, -3, 180,
-				 6500, "enemy1", 5, -3, 180,
-				 7000, "enemy1", 5, -3, 180,
-				 7500, "enemy1", 5, -3, 180,
-
-				 9000, "enemy1", 5,  2, 180,
-				 9500, "enemy1", 5,  1, 180,
-				10000, "enemy1", 5, -1, 180,
-				10500, "enemy1", 5, -2, 180,
-			};
-			List<WaveEventData> list = new List<WaveEventData>();
-			for (int i = 0, iCount = data.Length; i < iCount; i += 5) {
-				var item = new WaveEventData() {
-					startTime = (int)data[i + 0],
-					enemyName = (string)data[i + 1],
-					position = new Vector2((int)data[i + 2], (int)data[i + 3]),
-					angle = (int)data[i + 4],
-				};
-				list.Add(item);
-			}
-			return list.ToArray();
-		}
-
 #if UNITY_EDITOR
 		[CustomPropertyDrawer(typeof(WaveEventData))]
 		public class WaveEventDataDrawer : PropertyDrawer {
-			public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+			WaveEventData model = default;
+
+			static float LineHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+			static void PropertyField(ref Rect position, bool isLayout, SerializedProperty sp, GUIContent content = null) {
+				if (!isLayout) EditorGUI.PropertyField(position, sp, content);
+				position.y += LineHeight;
+			}
+
+			float Draw(Rect position, SerializedProperty property, GUIContent label, bool isLayout) {
 				// https://docs.unity3d.com/ja/current/ScriptReference/PropertyDrawer.html
 
-				WaveEventData model = default;
-				using (new EditorGUI.PropertyScope(position, label, property)) {
+				var startY = position.y;
+				if (!isLayout) EditorGUI.BeginProperty(position, label, property);
+				{
 					position.height = EditorGUIUtility.singleLineHeight;
+
+					var spType = property.FindPropertyRelative(nameof(model.type));
+					var spComment = property.FindPropertyRelative(nameof(model.comment));
+					var spStartTime = property.FindPropertyRelative(nameof(model.startTime));
+					var spEnemyName = property.FindPropertyRelative(nameof(model.enemyName));
+					var spPositionX = property.FindPropertyRelative(nameof(model.positionX));
+					var spPositionY = property.FindPropertyRelative(nameof(model.positionY));
+					var spAngle = property.FindPropertyRelative(nameof(model.angle));
+
+					var type = EnumUtil<WaveEventType>.GetValueAt(spType.enumValueIndex);
 
 					var pos21 = new Rect(position.x + position.width * 0.5f * 0, position.y, position.width * 0.5f, position.height);
 					var pos22 = new Rect(position.x + position.width * 0.5f * 1, position.y, position.width * 0.5f, position.height);
-					if (property.isExpanded) {
-						property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
-					} else {
-						property.isExpanded = EditorGUI.Foldout(pos21, property.isExpanded, label);
-						EditorGUI.PropertyField(pos22, property.FindPropertyRelative(nameof(model.startTime)), GUIContent.none);
-					}
-					position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-					if (property.isExpanded) {
-						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.startTime)));
-						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.enemyName)));
-						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-						EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(model.position)));
-						position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-						{
-							pos21.y = pos22.y = position.y;
-							var pAngle = property.FindPropertyRelative(nameof(model.angle));
-							EditorGUI.PropertyField(pos21, pAngle);
-							var vec = Vector2Util.FromDeg(pAngle.floatValue);
-							EditorGUI.Vector2Field(pos22, "", vec);
-							position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+					var pos31 = new Rect(position.x + position.width * 0.3f * 0, position.y, position.width * 0.3f, position.height);
+					var pos32 = new Rect(position.x + position.width * 0.3f * 1, position.y, position.width * 0.3f, position.height);
+					var pos33 = new Rect(position.x + position.width * 0.3f * 2, position.y, position.width * 0.3f, position.height);
+
+					bool isExpanded = property.isExpanded && type != WaveEventType.None;
+					{
+						if (!isLayout) {
+							if (isExpanded) {
+								property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+							} else {
+								property.isExpanded = EditorGUI.Foldout(pos31, property.isExpanded, label);
+								PropertyField(ref pos32, isLayout, spType, GUIContent.none);
+								if (type == WaveEventType.None) {
+									PropertyField(ref pos33, isLayout, spComment, GUIContent.none);
+								} else {
+									PropertyField(ref pos33, isLayout, spStartTime, GUIContent.none);
+								}
+							}
+						}
+						position.y += LineHeight;
+					}
+
+					if (isExpanded) {
+						PropertyField(ref position, isLayout, spType);
+
+						if (type == WaveEventType.None) {
+							PropertyField(ref position, isLayout, spComment);
+						} else if (type == WaveEventType.Spawn) {
+							PropertyField(ref position, isLayout, spStartTime);
+							PropertyField(ref position, isLayout, spEnemyName);
+							PropertyField(ref position, isLayout, spPositionX);
+							PropertyField(ref position, isLayout, spPositionY);
+							{
+								pos21.y = pos22.y = position.y;
+								PropertyField(ref pos21, isLayout, spAngle);
+								var vec = Vector2Util.FromDeg(spAngle.floatValue);
+								if (!isLayout) EditorGUI.BeginDisabledGroup(true);
+								if (!isLayout) EditorGUI.Vector2Field(pos22, "", vec);
+								if (!isLayout) EditorGUI.EndDisabledGroup();
+								position.y += LineHeight;
+							}
 						}
 					}
 				}
+				if (!isLayout) EditorGUI.EndProperty();
+				return position.y - startY;
+			}
+
+			public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+				// https://docs.unity3d.com/ja/current/ScriptReference/PropertyDrawer.html
+				Draw(position, property, label, false);
 			}
 
 			public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-				return property.isExpanded ?
-					(EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 5f :
-					EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+				return Draw(new Rect(), property, label, true);
 			}
 		}
 
 		[CustomEditor(typeof(WaveData))]
 		public class Inspector : UnityEditor.Editor {
 
-			WaveEventData copied;
 			ListEditor<WaveEventData> listEditor = new ListEditor<WaveEventData>() {
 				GetElementFunc = (_a, _b) => {
 					return ((WaveData)_a.serializedObject.targetObject).eventList[_b];
@@ -123,6 +130,8 @@ namespace Osakana4242.Content {
 						WaveEventData model = default;
 						_pElem.FindPropertyRelative(nameof(model.startTime)).floatValue += _prm;
 					};
+
+
 					EditorGUILayout.LabelField("startTime");
 
 					if (GUILayout.Button("<<")) {
@@ -136,6 +145,19 @@ namespace Osakana4242.Content {
 					}
 					if (GUILayout.Button(">>")) {
 						_self.listEditor.ForEachSelected(_spList, 1000, timeShiftFunc);
+					}
+				}
+				using (new EditorGUILayout.HorizontalScope()) {
+					if (GUILayout.Button("TSVコピー")) {
+						var data = (WaveData)_self.target;
+						EditorGUIUtility.systemCopyBuffer = TSVUtil.ToTSV(data.eventList);
+
+					}
+					if (GUILayout.Button("TSVペースト")) {
+						var data = (WaveData)_self.target;
+						var s = EditorGUIUtility.systemCopyBuffer;
+						data.eventList = TSVUtil.FromTSV<WaveEventData>(s);
+						_self.serializedObject.Update();
 					}
 				}
 			};
