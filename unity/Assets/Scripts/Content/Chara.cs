@@ -15,11 +15,17 @@ namespace Osakana4242.Content {
 			CollisionService.Instance.AddCollision(this, collision);
 		}
 
-		public void AddDamage(float damage) {
+		public void AddDamage(float damage, Chara from) {
 			data.hp -= damage;
+			if (from.data.layer == Layer.PlayerBullet) {
+				Main.Instance.playerInfo.score += 10;
+			}
 			if (0 < data.hp) return;
 			GameObject.Destroy(gameObject);
 			if (data.hasBlast) {
+				if (from.data.layer == Layer.PlayerBullet) {
+					Main.Instance.playerInfo.score += 100;
+				}
 				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>("eft_blast_01.prefab"), gameObject.transform.position, Quaternion.identity);
 				GameObject.Destroy(eft1, 1f);
 			}

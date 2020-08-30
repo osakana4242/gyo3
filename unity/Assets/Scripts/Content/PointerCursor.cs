@@ -43,23 +43,23 @@ namespace Osakana4242.Content {
 			}
 		}
 
-		void OnGUI() {
-			var width = 320f;
-			var scale = Screen.width / width;
-			GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, scale));
-			GUI.Box(new Rect(0, 0, width, 24), "");
-			var r = new Rect(0, 0, width, 20);
-//			GUI.Label(r, "t: " + Time.time.ToString("F1") + ", pos: " + pos + ", btn:" + btn);
-			var evt = Event.current;
-			switch (evt.type) {
-				case EventType.Repaint:
-				case EventType.Layout:
-				break;
-				default:
-//				Debug.Log("t:" + Time.time.ToString("F1") + ", evt: " + evt.type + ", pos:" + evt.mousePosition);
-				break;
-			}
-		}
+		// void OnGUI() {
+		// 	var width = 320f;
+		// 	var scale = Screen.width / width;
+		// 	GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, scale));
+		// 	GUI.Box(new Rect(0, 0, width, 24), "");
+		// 	var r = new Rect(0, 0, width, 20);
+		// 	GUI.Label(r, "t: " + Time.time.ToString("F1") + ", pos: " + pos + ", btn:" + btn);
+		// 	var evt = Event.current;
+		// 	switch (evt.type) {
+		// 		case EventType.Repaint:
+		// 		case EventType.Layout:
+		// 		break;
+		// 		default:
+		// 		Debug.Log("t:" + Time.time.ToString("F1") + ", evt: " + evt.type + ", pos:" + evt.mousePosition);
+		// 		break;
+		// 	}
+		// }
 
 		void InputAct.IShipActionActions.OnMove(InputAction.CallbackContext context) {
 			var vec = context.ReadValue<Vector2>();

@@ -11,8 +11,9 @@ namespace Osakana4242.Content {
 		[SerializeField] public BoxCollider bulletAliveArea;
 		[SerializeField] public BoxCollider screenArea;
 		[SerializeField] public ResourceData resourceData;
+		[SerializeField] public HUD hud;
 		public Stage stage = new Stage();
-
+		public PlayerInfo playerInfo = new PlayerInfo();
 		void Awake() {
 			instance_ = this;
 		}
@@ -44,6 +45,7 @@ namespace Osakana4242.Content {
 
 		void Update() {
 			ScreenService.Instance.AdjustIfNeeded();
+			hud.Update();
 		}
 	}
 }

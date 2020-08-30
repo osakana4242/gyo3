@@ -15,7 +15,7 @@ namespace Osakana4242.Content {
 		public void AddCollision(Chara chara, Collision collision) {
 			var other = collision.gameObject.GetComponent<Chara>();
 			if (other == null) return;
-			chara.AddDamage(1f);
+			chara.AddDamage(1f, other);
 			// other.AddDamage(1f);
 		}
 
