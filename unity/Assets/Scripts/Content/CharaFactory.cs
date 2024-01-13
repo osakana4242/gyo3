@@ -15,6 +15,7 @@ namespace Osakana4242.Content {
 			chara.data.hp = chara.data.hpMax = 3;
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = false;
+			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
 			go.name = "player_" + chara.data.id;
 
 			var player = go.AddComponent<Player>();
