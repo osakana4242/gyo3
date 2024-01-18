@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: config
   m_EditorClassIdentifier: 
   screen:
-    size: {x: 160, y: 240}
-    main: {x: 160, y: 80}
-    sub: {x: 160, y: 80}
+    size: {x: 160, y: 120}
+    main: {x: 160, y: 120}
+    sub: {x: 160, y: 0}
   testEnemy:
     enabled: 0
     enemyName: enemy_3

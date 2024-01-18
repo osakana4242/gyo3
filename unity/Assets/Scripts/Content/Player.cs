@@ -68,10 +68,10 @@ namespace Osakana4242.Content {
 				}
 				var prePos = pointerPrePos_;
 				pointerPrePos_ = Pointer.current.position.ReadValue();
-				var pos0 = pointerPrePos_;;
-				var posStart = ScreenService.Instance.Convert(pressPos_, Main.Instance.camera);
-				var localPrePos = ScreenService.Instance.Convert(prePos, Main.Instance.camera);
-				var posCur = ScreenService.Instance.Convert(pos0, Main.Instance.camera);
+				var pos0 = pointerPrePos_;
+				var posStart = ScreenService.Instance.Convert(pressPos_);
+				var localPrePos = ScreenService.Instance.Convert(prePos);
+				var posCur = ScreenService.Instance.Convert(pos0);
 				var deltaFromPre = posCur - localPrePos;
 				var mouseDeltaFromStart = posCur - posStart;
 

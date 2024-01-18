@@ -12,6 +12,8 @@ namespace Osakana4242.Content {
 		[SerializeField] public BoxCollider screenArea;
 		[SerializeField] public ResourceData resourceData;
 		[SerializeField] public HUD hud;
+		[SerializeField] public UnityEngine.UI.RawImage rawImage;
+
 		public Stage stage = new Stage();
 		public PlayerInfo playerInfo = new PlayerInfo();
 		void Awake() {
@@ -39,6 +41,7 @@ namespace Osakana4242.Content {
 
 		void FixedUpdate() {
 			if ( !initialzied_ ) return;
+			InputSystem.Update();
 			CollisionService.Instance.Update();
 			stage.Update();
 		}

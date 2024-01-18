@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Osakana4242.Content {
-	public class PointerCursor : MonoBehaviour, InputAct.IShipActionActions {
+	public class PointerCursor : MonoBehaviour {
 		bool isPressed_;
 
 		InputAct.ShipActionActions input;
@@ -12,8 +12,8 @@ namespace Osakana4242.Content {
 		int btn;
 
 		void Awake() {
-			input = new InputAct.ShipActionActions(new InputAct());
-			input.SetCallbacks(this);
+			// input = new InputAct.ShipActionActions(new InputAct());
+			// input.SetCallbacks(this);
 		}
 
 
@@ -21,25 +21,22 @@ namespace Osakana4242.Content {
 		}
 
 		void OnEnable() {
-			input.Enable();
+			// input.Enable();
 		}
 
 		void OnDisable() {
-			input.Disable();
+			// input.Disable();
 		}
 
 		void Update() {
 		}
 
 		void FixedUpdate() {
-			InputSystem.Update();
-
 			isPressed_ = Pointer.current.press.isPressed;
 			if (Pointer.current.press.isPressed) {
 				Vector2 pos0 = Pointer.current.position.ReadValue();
-				Vector3 pos1 = ScreenService.Instance.Convert(pos0, Main.Instance.camera);
-				pos1.z = -3f;
-				transform.position = pos1;
+				// Vector3 pos1 = ScreenService.Instance.ConvertB(pos0);
+				transform.position = pos0;
 			}
 		}
 
@@ -61,15 +58,15 @@ namespace Osakana4242.Content {
 		// 	}
 		// }
 
-		void InputAct.IShipActionActions.OnMove(InputAction.CallbackContext context) {
-			var vec = context.ReadValue<Vector2>();
-			pos = vec;
-			//			Debug.Log($"f: {Time.frameCount}, t: {Time.time}, vec: {vec}");
-		}
-		void InputAct.IShipActionActions.OnPress(InputAction.CallbackContext context) {
-			// context.ReadValueAsButton();
-			btn += 1;
-			//			Debug.Log($"f: {Time.frameCount}, t: {Time.time}, vec: {vec}");
-		}
+		// void InputAct.IShipActionActions.OnMove(InputAction.CallbackContext context) {
+		// 	var vec = context.ReadValue<Vector2>();
+		// 	pos = vec;
+		// 	//			Debug.Log($"f: {Time.frameCount}, t: {Time.time}, vec: {vec}");
+		// }
+		// void InputAct.IShipActionActions.OnPress(InputAction.CallbackContext context) {
+		// 	// context.ReadValueAsButton();
+		// 	btn += 1;
+		// 	//			Debug.Log($"f: {Time.frameCount}, t: {Time.time}, vec: {vec}");
+		// }
 	}
 }

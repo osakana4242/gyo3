@@ -14,9 +14,16 @@ namespace Osakana4242.Content {
 		float subHeight_;
 		Vector2 sc_;
 
+		RenderTexture tex_;
+
 		public static void Init() {
 			instance_ = new ScreenService();
 			instance_.AdjustIfNeeded();
+		}
+
+		public void Dispose() {
+			tex_.Release();
+			tex_ = null;
 		}
 
 		public float Scale => scale_;
@@ -25,7 +32,11 @@ namespace Osakana4242.Content {
 		public Vector2 GameSubSize => new Vector2(width_, subHeight_);
 
 		public void Adjust(Vector2 sc) {
-
+			if ( null == tex_ ) {
+				tex_ = new RenderTexture( 160, 120, 16, RenderTextureFormat.ARGB32 );
+				Main.Instance.camera.targetTexture = tex_;
+				Main.Instance.rawImage.texture = tex_;
+			}
 			var designAspect = Config.instance.screen.size.x / Config.instance.screen.size.y;
 			var screenAspect = sc.x / sc.y;
 			// w / h は縦長なほど小さくなる.
@@ -51,7 +62,8 @@ namespace Osakana4242.Content {
 				// スクリーンが縦長
 				width_ = Config.instance.screen.size.x;
 				scale_ = width_ / sc.x;
-				height_ = width_ * sc.y / sc.x;
+				height_ = Config.instance.screen.size.y;
+				//height_ = width_ * sc.y / sc.x;
 
 				mainHeight_ = Config.instance.screen.main.y;
 				subHeight_ = height_ - mainHeight_;
@@ -60,25 +72,47 @@ namespace Osakana4242.Content {
 			}
 			var h = Config.instance.screen.size.y;
 			var h2 = height_ - h;
-			Main.Instance.camera.transform.position = new Vector3(0f, h * -0.25f - h2 * 0.5f, -10f);
+			// Main.Instance.camera.transform.position = new Vector3(0f, h * -0.25f - h2 * 0.5f, -10f);
 
 		}
 
 		public void AdjustIfNeeded() {
 			var sc = new Vector2(Screen.width, Screen.height);
+			if ( null != tex_ ) {
+				sc = new Vector2( tex_.width, tex_.height );
+			}
 			if (sc_ == sc) return;
 			sc_ = sc;
 			Adjust(sc);
 		}
 
-		public Vector2 Convert(Vector2 pos0, Camera camera) {
-			var gameResolution = ScreenService.Instance.GameResolution;
-			var pos1 = pos0 * Scale + new Vector2(gameResolution.x * -0.5f, gameResolution.y * -0.5f);
-			var camPos = camera.transform.position;
+		public Vector2 Convert(Vector2 posFromCenter) {
+			// var posFromCenter = posFromLeftBottom - new Vector2( Screen.width, Screen.height ) * 0.5f;
+			var screenA = Main.Instance.rawImage;
+			var screenAPos = (Vector2)screenA.transform.position;
+			// 
+			var posFromScreenA = posFromCenter - screenAPos;
+			var screenASize = GetWorldSize( screenA.rectTransform );
+			var scaleBToA = new Vector2(
+				screenA.texture.width / screenASize.x,
+				screenA.texture.height / screenASize.y
+			);
+			// ScreenA の解像度に正規化.
+			var posFromScreenANormaliozed = Vector2.Scale( posFromScreenA, scaleBToA );
+			return posFromScreenANormaliozed;
+		}
 
-			var offsetX = ( width_ - (sc_.x * Scale) ) * 0.5f;
-			var pos2 = new Vector2(pos1.x + camPos.x + offsetX, pos1.y + camPos.y);
-			return pos2;
+		static Vector3[] fourCorners_g_ = new Vector3[4];
+		static Vector2 GetWorldSize( RectTransform tr ) {
+			tr.GetWorldCorners( fourCorners_g_ );
+			var leftBottom = fourCorners_g_[ 0 ];
+			var rightTop = fourCorners_g_[ 2 ];
+			var size = new Vector2(
+				rightTop.x - leftBottom.x,
+				rightTop.y - leftBottom.y
+			);
+			return size;
+			// return Vector2.Scale( tr.sizeDelta, tr.lossyScale );
 		}
 	}
 }
