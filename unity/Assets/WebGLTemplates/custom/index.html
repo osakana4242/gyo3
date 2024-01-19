@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
+    <title>{{{ PRODUCT_NAME }}}</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.webmanifest">
@@ -22,7 +22,7 @@
     <script>
       window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("ServiceWorker.js");
+          navigator.serviceWorker.register("ServiceWorker.js?v={{{ Date.now() }}}");
         }
       });
 
@@ -57,21 +57,21 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}?v={{{ Date.now() }}}";
       var config = {
-        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}?v={{{ Date.now() }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}?v={{{ Date.now() }}}",
 #if USE_THREADS
-        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
+        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}?v={{{ Date.now() }}}",
 #endif
 #if USE_WASM
-        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}?v={{{ Date.now() }}}",
 #endif
 #if MEMORY_FILENAME
-        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}?v={{{ Date.now() }}}",
 #endif
 #if SYMBOLS_FILENAME
-        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}?v={{{ Date.now() }}}",
 #endif
         streamingAssetsUrl: "StreamingAssets",
         companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
@@ -96,7 +96,7 @@
       }
 
 #if BACKGROUND_FILENAME
-      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}?v={{{ Date.now() }}}') center / cover";
 #endif
       loadingBar.style.display = "block";
 
