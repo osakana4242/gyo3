@@ -12,7 +12,8 @@ namespace Osakana4242.Content {
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Player;
-			chara.data.hp = chara.data.hpMax = 3;
+			chara.data.hpMax = new HitPointMax( 3 );
+			chara.data.hp = new HitPoint( chara.data.hpMax.value );
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = false;
 			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
@@ -35,7 +36,8 @@ namespace Osakana4242.Content {
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.PlayerBullet;
-			chara.data.hp = chara.data.hpMax = 1;
+			chara.data.hpMax = new HitPointMax( 1 );
+			chara.data.hp = new HitPoint( chara.data.hpMax.value );
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = true;
 			chara.data.velocity = new Vector3(SpeedByScreen(2f), 0f, 0f);
@@ -57,7 +59,8 @@ namespace Osakana4242.Content {
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.EnemyBullet;
-			chara.data.hp = chara.data.hpMax = 1;
+			chara.data.hpMax = new HitPointMax( 1 );
+			chara.data.hp = new HitPoint( chara.data.hpMax.value );
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = true;
 			chara.data.velocity = new Vector3(SpeedByScreen(1f), 0f, 0f);
@@ -83,26 +86,27 @@ namespace Osakana4242.Content {
 			var chara = go.AddComponent<Chara>();
 			chara.data.id = Main.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Enemy;
-			float hpMax;
+			HitPointMax hpMax;
 			GameObject prefab;
 			switch (aiName) {
 				default:
 				case "enemy_1":
 				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.ENM_01_PREFAB);
-				hpMax = 1;
+				hpMax = new HitPointMax( 1 );
 				break;
 
 				case "enemy_2":
 				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.PLY_01_PREFAB);
-				hpMax = 20;
+				hpMax = new HitPointMax( 20 );
 				break;
 
 				case "enemy_3":
 				prefab = ResourceService.Instance.Get<GameObject>(ResourceNames.ENM_01_PREFAB);
-				hpMax = 1;
+				hpMax = new HitPointMax( 1 );
 				break;
 			}
-			chara.data.hp = chara.data.hpMax = hpMax;
+			chara.data.hpMax = hpMax;
+			chara.data.hp = new HitPoint( chara.data.hpMax.value );
 			chara.data.hasBlast = true;
 			chara.data.hasDeadArea = true;
 			chara.data.aiName = aiName;

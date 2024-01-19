@@ -10,15 +10,14 @@ namespace Osakana4242.Content {
 		Camera camera_;
 		[SerializeField]
 		ParticleSystem.MinMaxGradient gradient;
-
 		IEnumerator Start() {
-			for ( int i = 0, iCount = 4; i < iCount; ++i ) {
-				Debug.Log( $"{i}" );
-				var t = ( ( float )i ) / ( iCount - 1 );
-				camera_.backgroundColor = gradient.Evaluate( t );
+			for (int i = 0, iCount = 240; i < iCount; ++i) {
+				Debug.Log($"{i}");
+				var t = ((float)i) / (iCount - 1);
+				camera_.backgroundColor = gradient.Evaluate(t);
 				yield return 0;
 			}
-			UnityEngine.SceneManagement.SceneManager.LoadScene( "mainScene", UnityEngine.SceneManagement.LoadSceneMode.Single );
+			UnityEngine.SceneManagement.SceneManager.LoadScene("mainScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
 		}
 	}
 }

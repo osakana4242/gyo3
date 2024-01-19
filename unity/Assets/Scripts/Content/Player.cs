@@ -62,20 +62,20 @@ namespace Osakana4242.Content {
 			var btn = Pointer.current.press;
 			if (btn.isPressed) {
 				if (!pressed_) {
-					pressPos_ = Pointer.current.position.ReadValue();
+					pressPos_ = ScreenAService.Instance.ToLocalPosition(Pointer.current.position.ReadValue());
 					anchorPos_ = chara.data.position;
 					pointerPrePos_ = pressPos_;
 				}
 				var prePos = pointerPrePos_;
-				pointerPrePos_ = Pointer.current.position.ReadValue();
+				pointerPrePos_ = ScreenAService.Instance.ToLocalPosition(Pointer.current.position.ReadValue());
 				var pos0 = pointerPrePos_;
-				var posStart = ScreenService.Instance.Convert(pressPos_);
-				var localPrePos = ScreenService.Instance.Convert(prePos);
-				var posCur = ScreenService.Instance.Convert(pos0);
+				var posStart = pressPos_;
+				var localPrePos = prePos;
+				var posCur = pos0;
 				var deltaFromPre = posCur - localPrePos;
 				var mouseDeltaFromStart = posCur - posStart;
 
-				var marginY = ScreenService.Instance.GameMainSize.y;
+				var marginY = ScreenAService.Instance.Size.y;
 				// var marginX = 32f;
 				var pressDelta = (Vector2)anchorPos_ - posStart;
 				//Debug.Log("pressDelta: " + pressDelta);

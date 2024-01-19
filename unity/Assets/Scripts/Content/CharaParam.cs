@@ -12,8 +12,8 @@ namespace Osakana4242.Content {
 		// player, bulletA, bulletB, enemy1
 		//public int type;
 		public int layer;
-		public float hp;
-		public float hpMax;
+		public HitPoint hp;
+		public HitPointMax hpMax;
 		public bool hasDeadArea;
 		public bool hasBlast;
 		public Vector3 position;
@@ -26,6 +26,36 @@ namespace Osakana4242.Content {
 		public Vector3 spawnedPosition;
 		public float stateTime = -1f;
 		public int state;
+	}
+
+	[System.Serializable]
+	public struct HitPoint {
+		public readonly int value;
+		public HitPoint( int value ) {
+			this.value = value;
+		}
+
+		public HitPoint AddDamge( Damage damage ) {
+			return new HitPoint( value - damage.value );
+		}
+
+		public bool isEmpty() => value <= 0;
+	}
+
+	[System.Serializable]
+	public struct Damage {
+		public readonly int value;
+		public Damage( int value ) {
+			this.value = value;
+		}
+	}
+
+	[System.Serializable]
+	public struct HitPointMax {
+		public readonly int value;
+		public HitPointMax( int value ) {
+			this.value = value;
+		}
 	}
 
 

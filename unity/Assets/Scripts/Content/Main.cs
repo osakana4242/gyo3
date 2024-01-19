@@ -7,7 +7,8 @@ using Osakana4242.UnityEngineExt;
 namespace Osakana4242.Content {
 	public class Main : MonoBehaviour {
 		static Main instance_;
-		[SerializeField] public new Camera camera;
+		[SerializeField] public Camera screenACamera;
+		[SerializeField] public Camera screenBCamera;
 		[SerializeField] public BoxCollider bulletAliveArea;
 		[SerializeField] public BoxCollider screenArea;
 		[SerializeField] public ResourceData resourceData;
@@ -26,7 +27,7 @@ namespace Osakana4242.Content {
 		IEnumerator Start() {
 			Physics.reuseCollisionCallbacks = true;
 			Config.instance = Resources.Load<Config>("config");
-			ScreenService.Init();
+			ScreenAService.Init();
 			ResourceService.Init();
 			CollisionService.Init();
 			stage.Init();
@@ -47,7 +48,7 @@ namespace Osakana4242.Content {
 		}
 
 		void Update() {
-			ScreenService.Instance.AdjustIfNeeded();
+			ScreenAService.Instance.AdjustIfNeeded();
 			hud.Update();
 		}
 	}
