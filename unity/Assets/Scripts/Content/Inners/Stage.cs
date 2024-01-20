@@ -4,7 +4,7 @@ using UnityEngine;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
 
@@ -13,7 +13,7 @@ namespace Osakana4242.Content {
 		public CharaBank charaBank = new CharaBank();
 		public StageTime time = new StageTime();
 
-		public static Stage Current => Main.Instance.stage;
+		public static Stage Current => InnerMain.Instance.stage;
 
 		public Stage() {
 			wave = new Wave();
@@ -22,7 +22,7 @@ namespace Osakana4242.Content {
 
 		public void Init() {
 			var player = CharaFactory.CreatePlayer();
-			Main.Instance.stage.charaBank.Add(player);
+			InnerMain.Instance.stage.charaBank.Add(player);
 			wave.Init();
 		}
 
@@ -35,7 +35,7 @@ namespace Osakana4242.Content {
 			} else {
 				if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
 					player = CharaFactory.CreatePlayer();
-					Main.Instance.stage.charaBank.Add(player);
+					InnerMain.Instance.stage.charaBank.Add(player);
 				}
 
 			}
@@ -151,7 +151,7 @@ namespace Osakana4242.Content {
 					enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
 					enemy.data.velocity = enemy.data.rotation * Vector3.forward;
 
-					Main.Instance.stage.charaBank.Add(enemy);
+					InnerMain.Instance.stage.charaBank.Add(enemy);
 				}
 			}
 
@@ -160,7 +160,7 @@ namespace Osakana4242.Content {
 					enemy = CharaFactory.CreateEnemy(testEnemy.enemyName);
 					enemy.data.position = testEnemy.positionList[testEnemyIndex];
 					enemy.data.rotation = Quaternion.LookRotation(new Vector2(-1f, 0f));
-					Main.Instance.stage.charaBank.Add(enemy);
+					InnerMain.Instance.stage.charaBank.Add(enemy);
 					testEnemyIndex = (testEnemyIndex + 1) % testEnemy.positionList.Length; ;
 				}
 			}

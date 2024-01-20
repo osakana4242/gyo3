@@ -4,7 +4,7 @@ using UnityEngine;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	public class CharaAI {
 		public static void ShotToPlayer(Chara self, ShotParam prm) {
 			var blt = CharaFactory.CreateBullet2();

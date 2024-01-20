@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	public class CollisionService {
 		static CollisionService instance_;
 		public static CollisionService Instance => instance_;

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Outers {
 	[System.Serializable]
 	public class HUD {
 		public TMPro.TextMeshProUGUI ui;
 		public void Update() {
-			var score = Main.Instance.playerInfo.score;
+			var score = Main.Instance.inner.playerInfo.score;
 			ui.text = FormatForContentFont(string.Format("SCORE {0}", score));
 		}
 

@@ -10,7 +10,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class WaveData : ScriptableObject {
 		public WaveEventData[] eventList;

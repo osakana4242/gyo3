@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Osakana4242.SystemExt;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	public class Player : MonoBehaviour {
 		void Start() {
 
@@ -93,7 +93,7 @@ namespace Osakana4242.Content {
 			}
 
 			{
-				var otherB = Main.Instance.screenArea.bounds;
+				var otherB = InnerMain.Instance.screenArea.bounds;
 				var ownC = GetComponentInChildren<Collider>();
 				var ownB = ownC.bounds;
 				ownB.center += chara.data.position - cpos0_;
@@ -142,7 +142,7 @@ namespace Osakana4242.Content {
 					shotTime = 0f;
 					var blt = CharaFactory.CreateBullet();
 					blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
-					Main.Instance.stage.charaBank.Add(blt);
+					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
 			}
 		}
@@ -183,7 +183,7 @@ namespace Osakana4242.Content {
 					blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
 					blt.data.rotation = chara.data.rotation * Quaternion.AngleAxis( bullet.angle, new Vector3( 1, 0, 0 ) );
 					blt.data.velocity = blt.data.rotation * Vector3.forward * bullet.speed;
-					Main.Instance.stage.charaBank.Add(blt);
+					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
 			}
 		}

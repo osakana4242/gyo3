@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-namespace Osakana4242.Content {
+using Osakana4242.UnityEngineExt;
+namespace Osakana4242.Content.Inners {
 
 	public class ScreenAService {
 		static ScreenAService instance_;
@@ -27,14 +27,13 @@ namespace Osakana4242.Content {
 		public void AdjustIfNeeded() {
 		}
 
-		/// <summary><see cref="Pointer.current.position.ReadValue" /> をこの画像内の位置に変換する</summary>
+		/// <summary><see cref="Pointer.current.position.ReadValue" /> をこの画像内の位置、解像度に変換する</summary>
 		public Vector2 ToLocalPosition(Vector2 screenPos) {
-			// var posFromCenter = posFromLeftBottom - new Vector2( Screen.width, Screen.height ) * 0.5f;
 			var screenAPos = (Vector2)screen_.transform.position;
 			// 
 			var posFromCenter = (Vector2)Main.Instance.screenBCamera.ScreenToWorldPoint(screenPos);
 			var posFromScreenA = posFromCenter - screenAPos;
-			var screenASize = GetWorldSize(screen_.rectTransform);
+			var screenASize = screen_.rectTransform.GetWorldSizeXY_Ext();
 			var scaleBToA = new Vector2(
 				screen_.texture.width / screenASize.x,
 				screen_.texture.height / screenASize.y
@@ -44,17 +43,5 @@ namespace Osakana4242.Content {
 			return posFromScreenANormaliozed;
 		}
 
-		static Vector3[] fourCorners_g_ = new Vector3[4];
-		static Vector2 GetWorldSize(RectTransform tr) {
-			tr.GetWorldCorners(fourCorners_g_);
-			var leftBottom = fourCorners_g_[0];
-			var rightTop = fourCorners_g_[2];
-			var size = new Vector2(
-				rightTop.x - leftBottom.x,
-				rightTop.y - leftBottom.y
-			);
-			return size;
-			// return Vector2.Scale( tr.sizeDelta, tr.lossyScale );
-		}
 	}
 }

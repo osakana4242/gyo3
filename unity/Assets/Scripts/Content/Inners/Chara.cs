@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	public class Chara : MonoBehaviour {
 		public CharaParam data = new CharaParam();
 
@@ -18,13 +18,13 @@ namespace Osakana4242.Content {
 		public void AddDamage(Damage damage, Chara from) {
 			data.hp = data.hp.AddDamge(damage);
 			if (from.data.layer == Layer.PlayerBullet) {
-				Main.Instance.playerInfo.score += new AddScore(10);
+				InnerMain.Instance.playerInfo.score += new AddScore(10);
 			}
 			if (!data.hp.isEmpty()) return;
 			GameObject.Destroy(gameObject);
 			if (data.hasBlast) {
 				if (from.data.layer == Layer.PlayerBullet) {
-					Main.Instance.playerInfo.score += new AddScore(100);
+					InnerMain.Instance.playerInfo.score += new AddScore(100);
 				}
 				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>("eft_blast_01.prefab"), gameObject.transform.position, Quaternion.identity);
 				GameObject.Destroy(eft1, 1f);
@@ -62,7 +62,7 @@ namespace Osakana4242.Content {
 
 			if (data.hasDeadArea) {
 				// エリア外.
-				var area = Main.Instance.bulletAliveArea;
+				var area = InnerMain.Instance.bulletAliveArea;
 				var a = area.bounds;
 				var b = GetComponentInChildren<Collider>().bounds;
 

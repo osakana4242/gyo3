@@ -949,22 +949,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screenACamera: {fileID: 963194227}
   screenBCamera: {fileID: 1158105487}
-  bulletAliveArea: {fileID: 944617879}
-  screenArea: {fileID: 1469556375}
   resourceData: {fileID: 11400000, guid: a7395f0f834a4ab4a85b27e1c0a76ced, type: 2}
   hud:
     ui: {fileID: 989746590}
   rawImage: {fileID: 600216732}
-  stage:
-    wave:
-      startTime: 0
-      data: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
-      debugStartTime: 0.1
-      debugLoopDuration: 95
-      testEnemyIndex: 0
-    time:
-      time: 0
-      dt: 0
+  inner:
+    bulletAliveArea: {fileID: 944617879}
+    screenArea: {fileID: 1469556375}
+    stage:
+      wave:
+        startTime: 0
+        data: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
+        debugStartTime: 0.1
+        debugLoopDuration: 95
+        testEnemyIndex: 0
+      time:
+        time: 0
+        dt: 0
 --- !u!1 &1410016640
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Osakana4242.SystemExt;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class CharaParam {
 		public int id;

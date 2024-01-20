@@ -88,6 +88,19 @@ namespace Osakana4242.UnityEngineExt {
 		}
 	}
 
+	public static class RectTransformExt {
+		static Vector3[] fourCorners_g_ = new Vector3[4];
 
-
+		public static Vector2 GetWorldSizeXY_Ext(this RectTransform tr) {
+			tr.GetWorldCorners(fourCorners_g_);
+			var leftBottom = fourCorners_g_[0];
+			var rightTop = fourCorners_g_[2];
+			var size = new Vector2(
+				rightTop.x - leftBottom.x,
+				rightTop.y - leftBottom.y
+			);
+			return size;
+			// return Vector2.Scale( tr.sizeDelta, tr.lossyScale );
+		}
+	}
 }

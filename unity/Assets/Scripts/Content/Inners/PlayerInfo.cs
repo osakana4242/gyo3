@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class PlayerInfo {
 		public Score score;

@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	public class CharaFactory {
 		public static Chara CreatePlayer() {
 			var go = new GameObject("player");
 			GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.PLY_01_PREFAB), go.transform);
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = Main.Instance.stage.charaBank.CreateId();
+			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Player;
 			chara.data.hpMax = new HitPointMax( 3 );
 			chara.data.hp = new HitPoint( chara.data.hpMax.value );
@@ -34,7 +34,7 @@ namespace Osakana4242.Content {
 		public static Chara CreateBullet() {
 			var go = new GameObject("blt");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = Main.Instance.stage.charaBank.CreateId();
+			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.PlayerBullet;
 			chara.data.hpMax = new HitPointMax( 1 );
 			chara.data.hp = new HitPoint( chara.data.hpMax.value );
@@ -57,7 +57,7 @@ namespace Osakana4242.Content {
 		public static Chara CreateBullet2() {
 			var go = new GameObject("blt");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = Main.Instance.stage.charaBank.CreateId();
+			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.EnemyBullet;
 			chara.data.hpMax = new HitPointMax( 1 );
 			chara.data.hp = new HitPoint( chara.data.hpMax.value );
@@ -84,7 +84,7 @@ namespace Osakana4242.Content {
 		public static Chara CreateEnemy(string aiName) {
 			var go = new GameObject("enemy");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = Main.Instance.stage.charaBank.CreateId();
+			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
 			chara.data.layer = Layer.Enemy;
 			HitPointMax hpMax;
 			GameObject prefab;
@@ -124,8 +124,8 @@ namespace Osakana4242.Content {
 
 
 			go.transform.position = new Vector3(
-				Main.Instance.bulletAliveArea.bounds.max.x,
-				Random.Range(Main.Instance.screenArea.bounds.min.x, Main.Instance.screenArea.bounds.max.x),
+				InnerMain.Instance.bulletAliveArea.bounds.max.x,
+				Random.Range(InnerMain.Instance.screenArea.bounds.min.x, InnerMain.Instance.screenArea.bounds.max.x),
 				0f);
 			//					enemy.transform.rotation = Quaternion.LookRotation(Vector3.left);
 			go.transform.localScale = new Vector3(-1f, 1f, 1f);
@@ -133,7 +133,7 @@ namespace Osakana4242.Content {
 		}
 
 		public static float SpeedByScreen(float s) {
-			return s * Config.instance.screen.main.x;
+			return s * ScreenAService.Instance.Size.x;
 		}
 	}
 

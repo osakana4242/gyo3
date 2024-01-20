@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
+using Osakana4242.Content.Inners;
 
 namespace Osakana4242.Content {
 	public class Main : MonoBehaviour {
 		static Main instance_;
 		[SerializeField] public Camera screenACamera;
 		[SerializeField] public Camera screenBCamera;
-		[SerializeField] public BoxCollider bulletAliveArea;
-		[SerializeField] public BoxCollider screenArea;
 		[SerializeField] public ResourceData resourceData;
-		[SerializeField] public HUD hud;
+		[SerializeField] public Outers.HUD hud;
 		[SerializeField] public UnityEngine.UI.RawImage rawImage;
-
-		public Stage stage = new Stage();
-		public PlayerInfo playerInfo = new PlayerInfo();
+		[SerializeField] public Inners.InnerMain inner;
 		void Awake() {
 			instance_ = this;
 		}
@@ -29,13 +26,7 @@ namespace Osakana4242.Content {
 			Config.instance = Resources.Load<Config>("config");
 			ScreenAService.Init();
 			ResourceService.Init();
-			CollisionService.Init();
-			stage.Init();
-			// var t = ResourceService.Init();
-			// while ( !t.IsCompleted ) {
-			// 	yield return null;
-			// }
-			// Debug.Log( "r: " + t.Result );
+			inner.Init();
 			initialzied_ = true;
 			yield return null;
 		}
@@ -43,8 +34,7 @@ namespace Osakana4242.Content {
 		void FixedUpdate() {
 			if ( !initialzied_ ) return;
 			InputSystem.Update();
-			CollisionService.Instance.Update();
-			stage.Update();
+			inner.Update();
 		}
 
 		void Update() {

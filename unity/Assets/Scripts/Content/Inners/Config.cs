@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Config : ScriptableObject {
 		public static Config instance;
