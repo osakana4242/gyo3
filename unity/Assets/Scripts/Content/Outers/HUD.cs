@@ -8,8 +8,9 @@ namespace Osakana4242.Content.Outers {
 	public class HUD {
 		public TMPro.TextMeshProUGUI ui;
 		public void Update() {
-			var score = Main.Instance.inner.playerInfo.score;
-			ui.text = FormatForContentFont(string.Format("SCORE {0}", score));
+			var playerInfo = Main.Instance.inner.playerInfo;
+			var score = playerInfo.score;
+			ui.text = FormatForContentFont(string.Format("SC {0} POW {1}", score, playerInfo.weaponChargeProgress.ToPercentString() ));
 		}
 
 		public static string FormatForContentFont(string str) {

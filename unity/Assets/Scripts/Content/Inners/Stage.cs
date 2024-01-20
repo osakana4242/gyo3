@@ -27,22 +27,29 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Update() {
+			time.Update(UnityEngine.Time.deltaTime);
+
 			charaBank.FixAdd();
 			charaBank.RemoveAll(this, (_item, _) => _item == null);
 			charaBank.ForEach(this, (_chara, _) => _chara.ManualUpdate());
-			if (charaBank.TryGetPlayer(out var player)) {
-				player.GetComponent<Player>().ManualUpdate(player);
-			} else {
-				if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
-					player = CharaFactory.CreatePlayer();
-					InnerMain.Instance.stage.charaBank.Add(player);
+			{
+				if (charaBank.TryGetPlayer(out var player)) {
+					player.GetComponent<Player>().ManualUpdate(player);
+				} else {
+					if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
+						player = CharaFactory.CreatePlayer();
+						InnerMain.Instance.stage.charaBank.Add(player);
+					}
 				}
-
 			}
 			wave.Update();
 
-
-			time.Update(UnityEngine.Time.deltaTime);
+			{
+				if (charaBank.TryGetPlayer(out var chara)) {
+					var charaPlayer = chara.GetComponent<Player>();
+					charaPlayer.Report();
+				}
+			}
 		}
 
 		[System.Serializable]

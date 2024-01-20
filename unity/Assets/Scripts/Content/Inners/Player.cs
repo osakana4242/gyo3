@@ -131,7 +131,11 @@ namespace Osakana4242.Content.Inners {
 			transform.position = chara.data.position;
 		}
 
-		class Weapon {
+		public void Report() {
+			InnerMain.Instance.playerInfo.weaponChargeProgress = chargeWeapon_.progress;
+		}
+
+		public class Weapon {
 			public float shotTime;
 			public float shotInterval = 0.05f;
 
@@ -148,20 +152,18 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		class ChargeWeapon {
-			public float shotTime;
-			public float shotInterval = 1f;
+			public WeaponChargeProgress progress = new WeaponChargeProgress(0f, 1f);
 
-			public void UpdateShot(Chara chara, bool hasCharge ) {
-				if ( hasCharge ) {
-					shotTime += Time.deltaTime;
+			public void UpdateShot(Chara chara, bool hasCharge) {
+				if (hasCharge) {
+					progress = progress.AddTime(Time.deltaTime);
 					return;
 				}
 
-				if (shotTime < shotInterval) {
+				if (!progress.IsComleted()) {
 					return;
 				}
-				Debug.Log( "charge shot!" );
-				shotTime = 0f;
+				progress = progress.Reset();
 
 				// アイデア
 				// ジェスチャーチャージ
@@ -178,10 +180,10 @@ namespace Osakana4242.Content.Inners {
 					( 10, CharaFactory.SpeedByScreen( 1.5f ) ),
 					( 20, CharaFactory.SpeedByScreen( 1.5f ) ),
 				};
-				foreach ( var bullet in bullets ) {
+				foreach (var bullet in bullets) {
 					var blt = CharaFactory.CreateBullet();
 					blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
-					blt.data.rotation = chara.data.rotation * Quaternion.AngleAxis( bullet.angle, new Vector3( 1, 0, 0 ) );
+					blt.data.rotation = chara.data.rotation * Quaternion.AngleAxis(bullet.angle, new Vector3(1, 0, 0));
 					blt.data.velocity = blt.data.rotation * Vector3.forward * bullet.speed;
 					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
@@ -205,4 +207,30 @@ namespace Osakana4242.Content.Inners {
 			UpLeft,
 		}
 	}
+
+	public struct WeaponChargeProgress {
+		readonly float time;
+		readonly float timeMax;
+
+		public WeaponChargeProgress(float time, float timeMax) {
+			this.time = time;
+			this.timeMax = timeMax;
+		}
+
+		public bool IsComleted() => timeMax <= time;
+
+		public WeaponChargeProgress AddTime(float addTime) {
+			return new WeaponChargeProgress(Mathf.Clamp(this.time + addTime, 0f, timeMax), timeMax);
+		}
+
+		public WeaponChargeProgress Reset() {
+			return new WeaponChargeProgress(0f, timeMax);
+		}
+
+		public string ToPercentString() {
+			var percent = (int)(time * 100 / timeMax);
+			return $"{percent}%";
+		}
+	}
+
 }

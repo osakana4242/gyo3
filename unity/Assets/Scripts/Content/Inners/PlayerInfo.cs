@@ -6,6 +6,7 @@ namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class PlayerInfo {
 		public Score score;
+		public WeaponChargeProgress weaponChargeProgress = new WeaponChargeProgress( 0f, 1f );
 	}
 
 	public struct AddScore {
