@@ -93,27 +93,27 @@ namespace Osakana4242.Content.Inners {
 			}
 
 			{
-				var otherB = InnerMain.Instance.screenArea.bounds;
-				var ownC = GetComponentInChildren<Collider>();
-				var ownB = ownC.bounds;
-				ownB.center += chara.data.position - cpos0_;
+				var otherBounds = InnerMain.Instance.playerMovableArea.bounds;
+				var ownCollider = GetComponentInChildren<Collider>();
+				var ownBounds = ownCollider.bounds;
+				ownBounds.center += chara.data.position - cpos0_;
 
-				if (ownB.min.x < otherB.min.x) {
-					var delta = otherB.min.x - ownB.min.x;
+				if (ownBounds.min.x < otherBounds.min.x) {
+					var delta = otherBounds.min.x - ownBounds.min.x;
 					chara.data.position.x += delta;
 					anchorPos_.x += delta;
-				} else if (otherB.max.x < ownB.max.x) {
-					var delta = otherB.max.x - ownB.max.x;
+				} else if (otherBounds.max.x < ownBounds.max.x) {
+					var delta = otherBounds.max.x - ownBounds.max.x;
 					chara.data.position.x += delta;
 					anchorPos_.x += delta;
 				}
 
-				if (ownB.min.y < otherB.min.y) {
-					var delta = otherB.min.y - ownB.min.y;
+				if (ownBounds.min.y < otherBounds.min.y) {
+					var delta = otherBounds.min.y - ownBounds.min.y;
 					chara.data.position.y += delta;
 					anchorPos_.y += delta;
-				} else if (otherB.max.y < ownB.max.y) {
-					var delta = otherB.max.y - ownB.max.y;
+				} else if (otherBounds.max.y < ownBounds.max.y) {
+					var delta = otherBounds.max.y - ownBounds.max.y;
 					chara.data.position.y += delta;
 					anchorPos_.y += delta;
 				}
@@ -161,8 +161,10 @@ namespace Osakana4242.Content.Inners {
 				}
 
 				if (!progress.IsComleted()) {
+					progress = progress.Reset();
 					return;
 				}
+				
 				progress = progress.Reset();
 
 				// アイデア

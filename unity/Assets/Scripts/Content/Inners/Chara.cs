@@ -21,12 +21,12 @@ namespace Osakana4242.Content.Inners {
 				InnerMain.Instance.playerInfo.score += new AddScore(10);
 			}
 			if (!data.hp.isEmpty()) return;
-			GameObject.Destroy(gameObject);
+			data.removeRequested = true;
 			if (data.hasBlast) {
 				if (from.data.layer == Layer.PlayerBullet) {
 					InnerMain.Instance.playerInfo.score += new AddScore(100);
 				}
-				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>("eft_blast_01.prefab"), gameObject.transform.position, Quaternion.identity);
+				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.EFT_BLAST_01_PREFAB), gameObject.transform.position, Quaternion.identity);
 				GameObject.Destroy(eft1, 1f);
 			}
 		}
@@ -67,7 +67,7 @@ namespace Osakana4242.Content.Inners {
 				var b = GetComponentInChildren<Collider>().bounds;
 
 				if (!a.Intersects(b)) {
-					GameObject.Destroy(gameObject);
+					data.removeRequested = true;
 				}
 			}
 

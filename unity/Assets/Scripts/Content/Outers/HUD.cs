@@ -7,7 +7,16 @@ namespace Osakana4242.Content.Outers {
 	[System.Serializable]
 	public class HUD {
 		public TMPro.TextMeshProUGUI ui;
+		public UnityEngine.UI.Button exitBtn;
+
+		public void Init() {
+			exitBtn.onClick.AddListener( () => {
+				if ( !Main.Instance.inner.CanExit() ) return;
+				Main.Instance.inner.hasExitRequest = true;
+			} );
+		}
 		public void Update() {
+			exitBtn.gameObject.SetActive( Main.Instance.inner.CanExit() );
 			var playerInfo = Main.Instance.inner.playerInfo;
 			var score = playerInfo.score;
 			ui.text = FormatForContentFont(string.Format("SC {0} POW {1}", score, playerInfo.weaponChargeProgress.ToPercentString() ));

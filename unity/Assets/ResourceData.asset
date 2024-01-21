@@ -23,12 +23,14 @@ MonoBehaviour:
     asset: {fileID: 9161227483246522722, guid: 3c92b4eb68b6a0e439d3b1fa43dde056, type: 3}
   - name: enm_01.prefab
     asset: {fileID: 8980606234633875723, guid: 9397814d11ad6984c9ac3ed35618faa4, type: 3}
-  - name: New GUISkin.guiskin
-    asset: {fileID: 11400000, guid: 9463ee34e90d4aa42b29cacda85f59cc, type: 2}
+  - name: exit_btn.prefab
+    asset: {fileID: 2012185059664503972, guid: 3d344cdd85382a5468575125a5e78c58, type: 3}
+  - name: game_over.prefab
+    asset: {fileID: 3360410224346170824, guid: 5dad985a298533e4183647cbe3ccce77, type: 3}
   - name: ply_01.prefab
     asset: {fileID: 8980606234633875723, guid: 71f27190cefae7a4aa79b2eb5e9e7f9e, type: 3}
   - name: pointer_01.prefab
     asset: {fileID: 8980606234633875723, guid: f592256cb5a9e0e4fb5ade224e464d0e, type: 3}
-  - name: sprite_atlas.spriteatlas
-    asset: {fileID: 4343727234628468602, guid: 0bc428f3336de4142a76ca983cb399df, type: 2}
+  - name: title.prefab
+    asset: {fileID: 3080032611305102581, guid: a200aae67ce52704c9b807c35fa479ab, type: 3}
   targetDirectory: {fileID: 102900000, guid: 9d1b5fcc214616747b439ec0603eed38, type: 3}

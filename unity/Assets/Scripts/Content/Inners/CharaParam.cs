@@ -26,6 +26,7 @@ namespace Osakana4242.Content.Inners {
 		public Vector3 spawnedPosition;
 		public float stateTime = -1f;
 		public int state;
+		public bool removeRequested;
 	}
 
 	[System.Serializable]

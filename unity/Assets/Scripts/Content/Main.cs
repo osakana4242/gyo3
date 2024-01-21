@@ -27,6 +27,7 @@ namespace Osakana4242.Content {
 			ScreenAService.Init();
 			ResourceService.Init();
 			inner.Init();
+			hud.Init();
 			initialzied_ = true;
 			yield return null;
 		}

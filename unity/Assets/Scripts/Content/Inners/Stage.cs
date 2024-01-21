@@ -21,25 +21,34 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Init() {
-			var player = CharaFactory.CreatePlayer();
-			InnerMain.Instance.stage.charaBank.Add(player);
+			Clear();
 			wave.Init();
+		}
+
+		public void Clear() {
+			charaBank.ForEach(this, (_chara, _) => _chara.data.removeRequested = true);
+			charaBank.RemoveAll(this, (_item, _) => _item.data.removeRequested);
+		}
+
+		public void AddPlayerIfNeeded() {
+			if (charaBank.TryGetPlayer(out var player)) return;
+			player = CharaFactory.CreatePlayer();
+			InnerMain.Instance.stage.charaBank.Add(player);
+		}
+
+		public bool ExistsPlayer() {
+			return charaBank.TryGetPlayer(out var _);
 		}
 
 		public void Update() {
 			time.Update(UnityEngine.Time.deltaTime);
 
 			charaBank.FixAdd();
-			charaBank.RemoveAll(this, (_item, _) => _item == null);
+			charaBank.RemoveAll(this, (_item, _) => _item.data.removeRequested);
 			charaBank.ForEach(this, (_chara, _) => _chara.ManualUpdate());
 			{
 				if (charaBank.TryGetPlayer(out var player)) {
 					player.GetComponent<Player>().ManualUpdate(player);
-				} else {
-					if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame) {
-						player = CharaFactory.CreatePlayer();
-						InnerMain.Instance.stage.charaBank.Add(player);
-					}
 				}
 			}
 			wave.Update();
@@ -87,12 +96,14 @@ namespace Osakana4242.Content.Inners {
 				}
 			}
 
-			public void RemoveAll<T>(T prm, System.Func<Chara, T, bool> act) {
+			public void RemoveAll<T>(T prm, System.Func<Chara, T, bool> matcher) {
 				foreach (var kv in dict) {
-					if (!act(kv.Value, prm)) continue;
+					if (!matcher(kv.Value, prm)) continue;
+					GameObject.Destroy(kv.Value.gameObject);
 					listCache.Add(kv.Key);
 				}
 				foreach (var key in listCache) {
+					var obj = dict[key];
 					dict.Remove(key);
 				}
 				listCache.Clear();
@@ -191,7 +202,7 @@ namespace Osakana4242.Content.Inners {
 		public float positionY;
 		// 0: 右, 90 下, 180: 左, 270: 上
 		public float angle;
-		
+
 		public Vector2 position => new Vector2(positionX, positionY);
 	}
 

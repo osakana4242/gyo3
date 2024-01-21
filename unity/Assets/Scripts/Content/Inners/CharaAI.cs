@@ -101,7 +101,7 @@ namespace Osakana4242.Content.Inners {
 			}
 
 			if (TimeEventData.TryGetEvent(15f, 0f, preTime, self.data.stateTime, out evtData)) {
-				GameObject.Destroy(self.gameObject);
+				self.data.removeRequested = true;
 			}
 
 			if (TimeEventData.TryGetEvent(2f, 0f, preTime, self.data.stateTime, out evtData)) {
