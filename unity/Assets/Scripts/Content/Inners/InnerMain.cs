@@ -14,120 +14,111 @@ namespace Osakana4242.Content.Inners {
 		[SerializeField] public BoxCollider playerMovableArea;
 		public Stage stage = new Stage();
 		public PlayerInfo playerInfo = new PlayerInfo();
-
+		public bool hasExitRequest;
+		readonly StateMachine sm_;
+		
 		public static InnerMain Instance => instance_;
 
-		State state_;
-		StateTime stateTime_;
-		GameObject title_;
-		GameObject gameOver_;
-		public bool hasExitRequest;
+		public InnerMain() {
+			sm_ = new StateMachine();
+			sm_.Add(createTitleState());
+			sm_.Add(createStageState());
+			sm_.Add(createGameoverState());
+		}
 
 		public void Init() {
 			CollisionService.Init();
 			instance_ = this;
+			sm_.Transition(StateId.Title);
 		}
 
 		public bool CanExit() {
-			switch ( state_ ) {
-				case State.Stage: return true;
-			}
+			if (sm_.Has(StateId.Stage)) return true;
 			return false;
 		}
 
 		public void Update() {
-			var ret = UpdateState();
-			if ( ret.hasNextState ) {
-				state_ = ret.nextState;
-				stateTime_ = new StateTime( 0f, 0f );
-			}
-
+			sm_.Update();
 			CollisionService.Instance.Update();
 			stage.Update();
 		}
 
+		StateBase createTitleState() {
+			float time = 0f;
+			GameObject title = null;
 
-		( State nextState, bool hasNextState ) UpdateState() {
-			stateTime_ = stateTime_.Evalute( Time.deltaTime );
-			switch ( state_ ) {
-				case State.None: {
-					return ( State.TitleEnter, true );
-				}
-				case State.TitleEnter: {
-					var titlePrefab = Main.Instance.resourceData.Get<GameObject>( ResourceNames.TITLE_PREFAB );
-					title_ = GameObject.Instantiate( titlePrefab, InnerMain.instance_.hudTr );
+			return new StateBase() {
+				Id = StateId.Title,
+				Enter = () => {
+					var titlePrefab = Main.Instance.resourceData.Get<GameObject>(ResourceNames.TITLE_PREFAB);
+					title = GameObject.Instantiate(titlePrefab, InnerMain.instance_.hudTr);
 					stage.Init();
-					return ( State.Title, true );
-				}
-				case State.Title: {
-					if ( stateTime_.time < 1f ) {
-						// 操作不能時間
-						break;
-					}
-					if ( !Pointer.current.press.isPressed ) {
-						break;
-					}
-					GameObject.Destroy( title_ );
-					title_ = null;
-					return ( State.StageEnter, true );
-				}
-				case State.StageEnter: {
+					time = 0f;
+				},
+				Update = () => {
+					time += Time.deltaTime;
+					if (time < 1f) return;
+					if (!Pointer.current.press.isPressed) return;
+					sm_.Transition(StateId.Stage);
+				},
+				Exit = () => {
+					GameObject.Destroy(title);
+					title = null;
+				},
+			};
+		}
+
+		StateBase createStageState() {
+			return new StateBase() {
+				Id = StateId.Stage,
+				Enter = () => {
 					hasExitRequest = false;
 					stage.Init();
 					stage.AddPlayerIfNeeded();
-					return ( State.Stage, true );
-				}
-				case State.Stage: {
-					if ( hasExitRequest ) {
+				},
+				Update = () => {
+					if (hasExitRequest) {
 						hasExitRequest = false;
-						return ( State.TitleEnter, true );
+						sm_.Transition(StateId.Title);
+						return;
 					}
-					if ( stage.ExistsPlayer() ) {
-						break;
+					if (stage.ExistsPlayer()) {
+						return;
 					}
-					return ( State.GameOverEnter, true );
-				}
-				case State.GameOverEnter: {
-					var gameOverPrefab = Main.Instance.resourceData.Get<GameObject>( ResourceNames.GAME_OVER_PREFAB );
-					gameOver_ = GameObject.Instantiate( gameOverPrefab, InnerMain.instance_.hudTr );
-					return ( State.GameOver, true );
-				}
-				case State.GameOver: {
-					if ( stateTime_.time < 2f ) {
-						break;
-					}
-					GameObject.Destroy( gameOver_ );
-					gameOver_ = null;
-					return ( State.TitleEnter, true );
-				}
-			}
-			return ( state_, false );
+					sm_.Transition(StateId.Gameover);
+				},
+				Exit = () => {
+				},
+			};
 		}
 
-		struct StateTime {
-			public readonly float time;
-			public readonly float deltaTime;
+		StateBase createGameoverState() {
+			var time = 0f;
+			GameObject gameOver = null;
 
-			public StateTime( float time, float deltaTime ) {
-				this.time = time;
-				this.deltaTime = deltaTime;
-			}
-
-			public float PrevTime => time - deltaTime;
-
-			public StateTime Evalute( float deltaTime ) {
-				return new StateTime( time + deltaTime, deltaTime );
-			}
+			return new StateBase() {
+				Id = StateId.Gameover,
+				Enter = () => {
+					time = 0f;
+					var gameOverPrefab = Main.Instance.resourceData.Get<GameObject>(ResourceNames.GAME_OVER_PREFAB);
+					gameOver = GameObject.Instantiate(gameOverPrefab, InnerMain.instance_.hudTr);
+				},
+				Update = () => {
+					time += Time.deltaTime;
+					if (time < 2f) return;
+					sm_.Transition(StateId.Title);
+				},
+				Exit = () => {
+					GameObject.Destroy(gameOver);
+					gameOver = null;
+				},
+			};
 		}
 
-		public enum State {
-			None,
-			TitleEnter,
-			Title,
-			StageEnter,
-			Stage,
-			GameOverEnter,
-			GameOver,
+		public static class StateId {
+			public const int Title = 1;
+			public const int Stage = 2;
+			public const int Gameover = 3;
 		}
 	}
 }
