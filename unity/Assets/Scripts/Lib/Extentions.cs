@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Osakana4242.SystemExt {
@@ -26,11 +27,28 @@ namespace Osakana4242.SystemExt {
 			return -1;
 		}
 	}
+
+	public static class DisposableUtil {
+		public static void DisposeAndNullSafe<T>( ref T disposable ) where T : class, System.IDisposable {
+			if ( null == disposable ) return;
+			disposable.Dispose();
+			disposable = null;
+		}
+	}
 }
 
 namespace Osakana4242.UnityEngineUtil {
 	using UnityEngine;
 	using Osakana4242.UnityEngineExt;
+
+	public static class ObjectUtil {
+		public static void DestroyAndNullSafe<T>( ref T obj ) where T : Object {
+			if ( null != obj ) {
+				Object.Destroy( obj );
+			}
+			obj = null;
+		}
+	}
 	public static class Vector2Util {
 		public static Vector2 FromDeg(float deg) {
 			switch (deg) {

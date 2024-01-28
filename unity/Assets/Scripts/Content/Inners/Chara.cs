@@ -26,7 +26,7 @@ namespace Osakana4242.Content.Inners {
 				if (from.data.layer == Layer.PlayerBullet) {
 					InnerMain.Instance.playerInfo.score += new AddScore(100);
 				}
-				var eft1 = GameObject.Instantiate(ResourceService.Instance.Get<GameObject>(ResourceNames.EFT_BLAST_01_PREFAB), gameObject.transform.position, Quaternion.identity);
+				var eft1 = GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.EFT_BLAST_01_PREFAB), gameObject.transform.position, Quaternion.identity);
 				GameObject.Destroy(eft1, 1f);
 			}
 		}

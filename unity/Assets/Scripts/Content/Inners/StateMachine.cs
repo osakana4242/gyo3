@@ -8,7 +8,7 @@ namespace Osakana4242.Content.Inners {
 
 	public class StateMachine {
 		readonly Dictionary<int, StateBase> stateDict = new Dictionary<int, StateBase>();
-		StateBase state = StateBase.Empty;
+		StateBase state_ = StateBase.Empty;
 		bool exit_;
 
 		public void Clear() {
@@ -16,23 +16,23 @@ namespace Osakana4242.Content.Inners {
 			stateDict.Clear();
 		}
 
-		public bool Has(int stateId) => state.Id == stateId;
+		public bool Has(int stateId) => state_.Id == stateId;
 		public void Update() {
-			state.Update();
+			state_.Update();
 		}
 		public void Transition(int stateId) {
-			if (!stateDict.TryGetValue(stateId, out var nextState)) {
-				throw new System.Exception($"stateId: {stateId}");
-			}
+			if (!stateDict.TryGetValue(stateId, out var nextState))
+				throw new System.Exception($"次の State が未登録. stateId: {stateId}");
 			Transition(nextState);
 		}
 		void Transition(StateBase nextState) {
 			if (exit_) throw new System.Exception($"Exit 中の Transition 禁止");
 			exit_ = true;
-			this.state.Exit();
+			state_.Exit();
 			exit_ = false;
-			state = nextState;
-			state.Enter();
+			Debug.Log( $"state: {state_.Id} to {nextState.Id}" );
+			state_ = nextState;
+			state_.Enter();
 		}
 
 		public void Add(StateBase state) {

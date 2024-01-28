@@ -25,7 +25,7 @@ namespace Osakana4242.Content {
 			Physics.reuseCollisionCallbacks = true;
 			Config.instance = Resources.Load<Config>("config");
 			ScreenAService.Init();
-			ResourceService.Init();
+			AssetService.Init();
 			inner.Init();
 			hud.Init();
 			initialzied_ = true;

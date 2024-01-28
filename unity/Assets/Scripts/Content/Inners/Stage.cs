@@ -1,28 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using UnityEngine;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
-
+using UnityEditor.Build.Content;
+using System.Threading;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
-
+		bool loading_;
 		public Wave wave;
 
 		public CharaBank charaBank = new CharaBank();
 		public StageTime time = new StageTime();
 
 		public static Stage Current => InnerMain.Instance.stage;
+		readonly CancellationTokenSource cancellationTokenSource = new();
+		List<object> assets_ = new List<object>();
 
 		public Stage() {
 			wave = new Wave();
 
 		}
-
 		public void Init() {
 			Clear();
 			wave.Init();
+			if (!loading_) {
+				_ = LoadAssetAsync(cancellationTokenSource.Token);
+			}
+		}
+
+		public void Dispose() {
+			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
+			Clear();
 		}
 
 		public void Clear() {
@@ -30,9 +43,50 @@ namespace Osakana4242.Content.Inners {
 			charaBank.RemoveAll(this, (_item, _) => _item.data.removeRequested);
 		}
 
+		public bool IsLoading() => loading_;
+
+		public async Task LoadAssetAsync(CancellationToken cancellationToken) {
+			int n = 0;
+			while (loading_) {
+				cancellationToken.ThrowIfCancellationRequested();
+				await Task.Delay(1);
+			}
+			loading_ = true;
+			try {
+				var preLoadAssetInfoList = new AssetInfo[] {
+					AssetInfos.BLT_01_PREFAB,
+					AssetInfos.BLT_02_PREFAB,
+					AssetInfos.EFT_BLAST_01_PREFAB,
+					AssetInfos.ENM_01_PREFAB,
+					AssetInfos.PLY_01_PREFAB,
+				};
+
+				var tasks = preLoadAssetInfoList.
+					Select(info => AssetService.Instance.GetAsync<GameObject>(info, cancellationToken)).
+					ForEach_Ext();
+
+				foreach (var task in tasks) {
+					cancellationToken.ThrowIfCancellationRequested();
+					assets_.Add(await task);
+				}
+				await Task.Delay(1000);
+			} catch (TaskCanceledException ex) {
+				Debug.Log($"task canceled: {ex}");
+				throw ex;
+			} catch (System.Exception ex) {
+				Debug.LogError($"ex: {ex}");
+				throw ex;
+			} finally {
+				loading_ = false;
+				++n;
+				Debug.Log($"n: {n}");
+			}
+		}
+
 		public void AddPlayerIfNeeded() {
-			if (charaBank.TryGetPlayer(out var player)) return;
-			player = CharaFactory.CreatePlayer();
+			if (InnerMain.Instance.playerInfo.stock.IsEmpty()) return;
+			if (charaBank.TryGetPlayer(out var _)) return;
+			var player = CharaFactory.CreatePlayer();
 			InnerMain.Instance.stage.charaBank.Add(player);
 		}
 
@@ -41,6 +95,7 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Update() {
+			if (loading_) return;
 			time.Update(UnityEngine.Time.deltaTime);
 
 			charaBank.FixAdd();
@@ -79,6 +134,7 @@ namespace Osakana4242.Content.Inners {
 				chara.gameObject.SetActive(true);
 				chara.ApplyTransform();
 				if (chara.data.layer == Layer.Player) {
+					InnerMain.Instance.playerInfo.stock = InnerMain.Instance.playerInfo.stock.Spawned();
 					playerId = chara.data.id;
 				}
 			}

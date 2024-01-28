@@ -80,3 +80,13 @@ csharp_space_between_square_brackets = false
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
+
+# for unity
+## new の簡略化
+dotnet_diagnostic.IDE0090.severity = none
+## readonly 付けられるよ
+dotnet_diagnostic.IDE0044.severity = none
+## 未使用 private メンバー 
+dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.RCS1169.severity = none
+dotnet_diagnostic.RCS1213.severity = none
