@@ -10,6 +10,14 @@ using System.Threading;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
+		static readonly AssetInfo[] preLoadAssetInfoList_g_ = {
+			AssetInfos.BLT_01_PREFAB,
+			AssetInfos.BLT_02_PREFAB,
+			AssetInfos.EFT_BLAST_01_PREFAB,
+			AssetInfos.ENM_01_PREFAB,
+			AssetInfos.PLY_01_PREFAB,
+		};
+
 		bool loading_;
 		public Wave wave;
 
@@ -53,15 +61,7 @@ namespace Osakana4242.Content.Inners {
 			}
 			loading_ = true;
 			try {
-				var preLoadAssetInfoList = new AssetInfo[] {
-					AssetInfos.BLT_01_PREFAB,
-					AssetInfos.BLT_02_PREFAB,
-					AssetInfos.EFT_BLAST_01_PREFAB,
-					AssetInfos.ENM_01_PREFAB,
-					AssetInfos.PLY_01_PREFAB,
-				};
-
-				var tasks = preLoadAssetInfoList.
+				var tasks = preLoadAssetInfoList_g_.
 					Select(info => AssetService.Instance.GetAsync<GameObject>(info, cancellationToken)).
 					ForEach_Ext();
 
@@ -69,7 +69,6 @@ namespace Osakana4242.Content.Inners {
 					cancellationToken.ThrowIfCancellationRequested();
 					assets_.Add(await task);
 				}
-				await Task.Delay(1000);
 			} catch (TaskCanceledException ex) {
 				Debug.Log($"task canceled: {ex}");
 				throw ex;
@@ -79,7 +78,6 @@ namespace Osakana4242.Content.Inners {
 			} finally {
 				loading_ = false;
 				++n;
-				Debug.Log($"n: {n}");
 			}
 		}
 

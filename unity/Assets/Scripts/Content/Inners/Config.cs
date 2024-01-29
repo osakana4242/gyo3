@@ -13,7 +13,7 @@ namespace Osakana4242.Content.Inners {
 
 		// content
 		public TestEnemyWave testEnemy = new TestEnemyWave();
-
+		public AssetConfig resourceData;
 		[System.Serializable]
 		public class Screen {
 			public Vector2 size = new Vector2(320f, 480f);

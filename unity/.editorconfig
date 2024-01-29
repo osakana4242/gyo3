@@ -86,6 +86,8 @@ csharp_preserve_single_line_statements = true
 dotnet_diagnostic.IDE0090.severity = none
 ## readonly 付けられるよ
 dotnet_diagnostic.IDE0044.severity = none
+## new ()
+dotnet_diagnostic.IDE0017.severity = none
 ## 未使用 private メンバー 
 dotnet_diagnostic.IDE0051.severity = none
 dotnet_diagnostic.RCS1169.severity = none

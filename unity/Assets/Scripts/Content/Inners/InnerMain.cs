@@ -78,8 +78,8 @@ namespace Osakana4242.Content.Inners {
 					elapsedTime = ElapsedTime.empty;
 				},
 				Update = () => {
-
 					elapsedTime = elapsedTime.Evaluete(Time.deltaTime);
+					updateAnim();
 					if (elapsedTime.value < 1f) return;
 					if (!Pointer.current.press.isPressed) return;
 					sm_.Transition(StateId.StageReady);
@@ -98,7 +98,17 @@ namespace Osakana4242.Content.Inners {
 				cancellationToken.ThrowIfCancellationRequested();
 				title = GameObject.Instantiate(await titlePrefab, InnerMain.instance_.hudTr);
 				touchToStart = GameObject.Instantiate(await touchToStartPrefab, InnerMain.instance_.hudTr);
-				touchToStart.GetComponent<Animation>().Play(AssetInfos.TITLE_TOUCH_TO_START_IDLE_ANIM.AnimationClipName);
+			}
+
+			void updateAnim() {
+				if (null == touchToStart) return;
+				var touchToStartAnim = touchToStart.GetComponent<Animation>();
+				var targetAnimInfo = elapsedTime.value < 1f ?
+					AssetInfos.TITLE_TOUCH_TO_START_HIDDEN_ANIM :
+					AssetInfos.TITLE_TOUCH_TO_START_IDLE_ANIM;
+				if (!touchToStartAnim.IsPlaying(targetAnimInfo.AnimationClipName)) {
+					touchToStartAnim.Play(targetAnimInfo.AnimationClipName);
+				}
 			}
 		}
 
@@ -110,7 +120,7 @@ namespace Osakana4242.Content.Inners {
 				},
 				Update = () => {
 					if (stage.IsLoading()) return;
-					if (stage.IsLoading()) throw new System.Exception( "stage が末ロード" );
+					if (stage.IsLoading()) throw new System.Exception("stage が末ロード");
 					sm_.Transition(StateId.Stage);
 				},
 				Exit = () => {
@@ -122,10 +132,10 @@ namespace Osakana4242.Content.Inners {
 			return new StateBase() {
 				Id = StateId.Stage,
 				Enter = () => {
-					if (stage.IsLoading()) throw new System.Exception( "stage が末ロード" );
+					if (stage.IsLoading()) throw new System.Exception("stage が末ロード");
 					hasExitRequest = false;
 					playerInfo.stock = new PlayerStock(1);
-					if (stage.IsLoading()) throw new System.Exception( "stage が末ロード" );
+					if (stage.IsLoading()) throw new System.Exception("stage が末ロード");
 				},
 				Update = () => {
 					stage.AddPlayerIfNeeded();
