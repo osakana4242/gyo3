@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.Content.Inners;
 using System.Threading;
-using Osakana4242.AssetServices;
+using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content {
 	public class Main : MonoBehaviour {

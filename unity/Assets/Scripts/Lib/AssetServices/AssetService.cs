@@ -1,13 +1,10 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Threading.Tasks;
 using System.Threading;
-using UnityEngine.InputSystem.Utilities;
-using System.Collections.ObjectModel;
 
-namespace Osakana4242.AssetServices {
+namespace Osakana4242.Lib.AssetServices {
 	public class AssetService {
 		static AssetService instance_;
 		public static AssetService Instance => instance_;

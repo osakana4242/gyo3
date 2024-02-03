@@ -1,7 +1,7 @@
 ﻿
-/// genereated from <see cref="Osakana4242.AssetServices.AssetConfig" />.
+/// genereated from <see cref="Osakana4242.Lib.AssetServices.AssetConfig" />.
 
-using Osakana4242.AssetServices;
+using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content {
 	public static class AssetInfos {

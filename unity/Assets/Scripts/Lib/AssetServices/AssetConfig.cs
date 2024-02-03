@@ -1,11 +1,9 @@
+
 using UnityEngine;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Threading;
 using UnityEditor;
 
-namespace Osakana4242.AssetServices {
+namespace Osakana4242.Lib.AssetServices {
 	public class AssetConfig : ScriptableObject {
 #if UNITY_EDITOR
 		static string tmpl_g_ = @"

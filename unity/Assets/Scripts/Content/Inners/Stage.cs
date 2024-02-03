@@ -7,7 +7,7 @@ using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
 using UnityEditor.Build.Content;
 using System.Threading;
-using Osakana4242.AssetServices;
+using Osakana4242.Lib.AssetServices;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {

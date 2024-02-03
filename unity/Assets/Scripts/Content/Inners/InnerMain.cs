@@ -8,7 +8,7 @@ using Osakana4242.UnityEngineUtil;
 using Osakana4242.SystemExt;
 using System.Linq;
 using System.Threading;
-using Osakana4242.AssetServices;
+using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content.Inners {
 	public static class IEnumrableExt {
