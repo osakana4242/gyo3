@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.UnityEngineExt;
+using Osakana4242.AssetServices;
 
 namespace Osakana4242.Content.Inners {
 	public class CharaFactory {

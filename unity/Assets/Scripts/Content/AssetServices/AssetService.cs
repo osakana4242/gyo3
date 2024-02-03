@@ -7,7 +7,7 @@ using System.Threading;
 using UnityEngine.InputSystem.Utilities;
 using System.Collections.ObjectModel;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.AssetServices {
 	public class AssetService {
 		static AssetService instance_;
 		public static AssetService Instance => instance_;

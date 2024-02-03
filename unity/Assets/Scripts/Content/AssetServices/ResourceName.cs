@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
-namespace Osakana4242.Content {
+namespace Osakana4242.AssetServices {
 
 	public readonly struct ResourceName {
 		public readonly string value;

@@ -7,7 +7,7 @@ using System.Threading;
 using UnityEngine.InputSystem.Utilities;
 using System.Collections.ObjectModel;
 
-namespace Osakana4242.Content {
+namespace Osakana4242.AssetServices {
 	public class AssetHolder {
 		public readonly AssetInfo info;
 		readonly System.WeakReference assetRef_ = new(null);
