@@ -8,6 +8,7 @@ using Osakana4242.UnityEngineExt;
 namespace Osakana4242.Content.Inners {
 	public sealed class AIName {
 		Dictionary<HashKey, System.Action<Chara>> updateFuncs_g_ = new Dictionary<HashKey, System.Action<Chara>> {
+			{ "effect".ToHashKey_Ext(), CharaAIs.Effect.Update },
 			{ "enemy_test_rotation".ToHashKey_Ext(), CharaAIs.EnemyTestRoation.Update },
 			{ "enemy_1".ToHashKey_Ext(), CharaAIs.Enemy1.Update },
 			{ "enemy_2".ToHashKey_Ext(), CharaAIs.Enemy2.Update },
@@ -51,11 +52,12 @@ namespace Osakana4242.Content.Inners {
 		public AIName aiName = AIName.Empty;
 		public float spawnedTime;
 		public Vector3 spawnedPosition;
+		public float duration;
 		public float stateTime = -1f;
 		public int state;
 		public bool removeRequested;
 
-		public int Layer => charaType.ToLayer();
+		public int Layer => charaType.GetLayer();
 
 		public void SetInfo(CharaInfo info) {
 			this.charaType = info.charaType;
@@ -64,6 +66,17 @@ namespace Osakana4242.Content.Inners {
 			this.hasBlast = info.hasBlast;
 			this.hasDeadArea = info.hasDeadArea;
 			this.aiName = new AIName( info.aiName );
+		}
+
+		public void SetSortingOrderTo(GameObject go) {
+			go.transform.ForEachChildWithSelf_Ext(charaType.GetSortingOrder(), (_tr, _prm) => {
+				if (!_tr.TryGetComponent<Renderer>(out var r)) return;
+				r.sortingOrder = _prm;
+			});
+		}
+
+		public void SetLayerTo(GameObject go) {
+			go.transform.ForEachChildWithSelf_Ext(Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 		}
 	}
 

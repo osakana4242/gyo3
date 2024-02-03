@@ -206,7 +206,7 @@ namespace Osakana4242.Content.Inners {
 			public async Task LoadAssetAsync(CancellationToken cancellationToken) {
 				var charaInfoTasks = data.eventList.
 					Where(row => row.type == WaveEventType.Spawn).
-					Select(row => AssetService.Instance.GetAsync<CharaInfo>(AssetInfos.Get($"{row.enemyName}.asset"), cancellationToken)).
+					Select(row => AssetService.Instance.GetAsync<CharaInfo>(row.GetEnemyCharaInfoAssetInfo(), cancellationToken)).
 					ForEach_Ext();
 
 				foreach (var charaInfoTask in charaInfoTasks) {
@@ -245,8 +245,8 @@ namespace Osakana4242.Content.Inners {
 					var row = data.eventList[i];
 					if (row.type == WaveEventType.None) continue;
 					if (!TimeEventData.TryGetEvent(startTime + (row.startTime / 1000f), 0f, preTime, time, out var eventData)) continue;
-					var pos = row.position * 16f;
-					var charaInfo = AssetService.Instance.Get<CharaInfo>(AssetInfos.Get($"{row.enemyName}.asset"));
+					var pos = row.Position * 16f;
+					var charaInfo = row.GetEnemyCharaInfo();
 					var enemy = CharaFactory.CreateEnemy(charaInfo);
 					enemy.data.position = pos;
 					var vec = Vector2Util.FromDeg(row.angle);
@@ -288,7 +288,9 @@ namespace Osakana4242.Content.Inners {
 		// 0: 右, 90 下, 180: 左, 270: 上
 		public float angle;
 
-		public Vector2 position => new Vector2(positionX, positionY);
+		public Vector2 Position => new Vector2(positionX, positionY);
+		public AssetInfo GetEnemyCharaInfoAssetInfo() =>AssetInfos.Get($"{enemyName}.asset");
+		public CharaInfo GetEnemyCharaInfo() => AssetService.Instance.Get<CharaInfo>(GetEnemyCharaInfoAssetInfo());
 	}
 
 	[System.Serializable]

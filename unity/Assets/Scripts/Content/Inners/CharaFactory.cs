@@ -7,6 +7,28 @@ using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content.Inners {
 	public class CharaFactory {
+		public static Chara CreateEffect() {
+			var prefab = AssetService.Instance.Get<GameObject>(AssetInfos.EFT_BLAST_01_PREFAB);
+			var charaId = InnerMain.Instance.stage.charaBank.CreateId();
+			var go = new GameObject($"eft_{charaId}");
+			var chara = go.AddComponent<Chara>();
+			chara.data.id = charaId;
+			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
+			chara.data.charaType = CharaType.Effect;
+			chara.data.aiName = new AIName("effect");
+
+			go.transform.position = new Vector3(0f, 0f, 0f);
+			//					player.transform.rotation = Quaternion.LookRotation(Vector3.right);
+			var rb = go.AddComponent<Rigidbody>();
+			rb.isKinematic = false;
+			rb.constraints = RigidbodyConstraints.FreezeAll;
+			rb.useGravity = false;
+
+			chara.AttachModelTo(prefab);
+
+			return chara;
+		}
+
 		public static Chara CreatePlayer() {
 			var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.PLAYER_ASSET);
 			var prefab = AssetService.Instance.Get<GameObject>(AssetInfos.Get(info.modelName));
@@ -17,7 +39,6 @@ namespace Osakana4242.Content.Inners {
 			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
 			chara.data.SetInfo(info);
 
-			GameObject.Instantiate(prefab, go.transform);
 
 			var player = go.AddComponent<Player>();
 			go.transform.position = new Vector3(0f, 0f, 0f);
@@ -26,7 +47,8 @@ namespace Osakana4242.Content.Inners {
 			rb.isKinematic = false;
 			rb.constraints = RigidbodyConstraints.FreezeAll;
 			rb.useGravity = false;
-			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
+
+			chara.AttachModelTo(prefab);
 
 			return chara;
 		}
@@ -39,13 +61,12 @@ namespace Osakana4242.Content.Inners {
 			chara.data.id = charaId;
 			chara.data.SetInfo(info);
 
-			GameObject.Instantiate(prefab, go.transform);
-
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = true;
 			rb.useGravity = false;
 
-			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
+			chara.AttachModelTo(prefab);
+
 			return chara;
 		}
 
@@ -65,14 +86,12 @@ namespace Osakana4242.Content.Inners {
 			chara.data.rotation = Quaternion.LookRotation(Vector3.left);
 			chara.data.velocity = chara.data.rotation * Vector3.forward * SpeedByScreen(0.25f);
 
-			GameObject.Instantiate(prefab, go.transform);
-
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = false;
 			rb.constraints = RigidbodyConstraints.FreezeAll;
 			rb.useGravity = false;
-			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 
+			chara.AttachModelTo(prefab);
 
 			go.transform.position = new Vector3(
 				InnerMain.Instance.bulletAliveArea.bounds.max.x,

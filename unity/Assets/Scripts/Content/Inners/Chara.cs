@@ -27,8 +27,9 @@ namespace Osakana4242.Content.Inners {
 				if (from.data.charaType == CharaType.PlayerBullet) {
 					InnerMain.Instance.playerInfo.score += new AddScore(100);
 				}
-				var eft1 = GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.EFT_BLAST_01_PREFAB), gameObject.transform.position, Quaternion.identity);
-				GameObject.Destroy(eft1, 1f);
+				var eft = CharaFactory.CreateEffect();
+				eft.data.position = data.position;
+				InnerMain.Instance.stage.charaBank.Add(eft);
 			}
 		}
 
@@ -88,6 +89,16 @@ namespace Osakana4242.Content.Inners {
 			transform.localRotation = rot;
 		}
 
+		public void AttachModelTo(GameObject prefab) {
+			var go = gameObject;
+			var model = new GameObject("model");
+			model.transform.SetParent(go.transform, false);
+
+			GameObject.Instantiate(prefab, model.transform);
+
+			data.SetLayerTo(go);
+			data.SetSortingOrderTo(go);
+		}
 
 	}
 }

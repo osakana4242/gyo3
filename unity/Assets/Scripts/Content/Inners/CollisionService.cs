@@ -13,8 +13,7 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void AddCollision(Chara chara, Collision collision) {
-			var other = collision.gameObject.GetComponent<Chara>();
-			if (null == other) return;
+			if (!collision.gameObject.TryGetComponent<Chara>(out var other)) return;
 			chara.AddDamage(new Damage(1), other);
 			// other.AddDamage(1f);
 		}
