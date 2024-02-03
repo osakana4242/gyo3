@@ -41,7 +41,7 @@ namespace {2} {{
 			for (int i = 0, iCount = guidList.Length; i < iCount; ++i) {
 				var guid = guidList[i];
 				var info = AssetInfo.Editor_CreateByGUID(guid);
-				if (info.IsDirectory())
+				if (info.Editor_IsDirectory())
 					continue; // ディレクトリはスキップ.
 				resourceInfoList.Add(info);
 			}

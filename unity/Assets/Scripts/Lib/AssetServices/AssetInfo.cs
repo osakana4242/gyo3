@@ -16,8 +16,9 @@ namespace Osakana4242.Lib.AssetServices {
 			this.resourceName = new ResourceName(path);
 			this.type = type;
 		}
-
-		public bool IsDirectory() => type == typeof(UnityEditor.DefaultAsset);
+#if UNITY_EDITOR
+		public bool Editor_IsDirectory() => type == typeof(UnityEditor.DefaultAsset);
+#endif
 		public override string ToString() => $"{pathFromAssets}";
 		public string AnimationClipName {
 			get {
