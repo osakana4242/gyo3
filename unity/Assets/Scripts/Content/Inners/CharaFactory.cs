@@ -8,17 +8,16 @@ using Osakana4242.Lib.AssetServices;
 namespace Osakana4242.Content.Inners {
 	public class CharaFactory {
 		public static Chara CreatePlayer() {
-			var go = new GameObject("player");
-			GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.PLY_01_PREFAB), go.transform);
+			var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.PLAYER_ASSET);
+			var prefab = AssetService.Instance.Get<GameObject>(AssetInfos.Get(info.modelName));
+			var charaId = InnerMain.Instance.stage.charaBank.CreateId();
+			var go = new GameObject($"player_{charaId}");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
-			chara.data.layer = Layer.Player;
-			chara.data.hpMax = new HitPointMax( 3 );
-			chara.data.hp = new HitPoint( chara.data.hpMax.value );
-			chara.data.hasBlast = true;
-			chara.data.hasDeadArea = false;
+			chara.data.id = charaId;
 			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
-			go.name = "player_" + chara.data.id;
+			chara.data.SetInfo(info);
+
+			GameObject.Instantiate(prefab, go.transform);
 
 			var player = go.AddComponent<Player>();
 			go.transform.position = new Vector3(0f, 0f, 0f);
@@ -27,91 +26,42 @@ namespace Osakana4242.Content.Inners {
 			rb.isKinematic = false;
 			rb.constraints = RigidbodyConstraints.FreezeAll;
 			rb.useGravity = false;
-			go.transform.ForEachChildWithSelf_Ext(chara.data.layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
+			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 
 			return chara;
 		}
 
-		public static Chara CreateBullet() {
-			var go = new GameObject("blt");
+		public static Chara CreateBullet(CharaInfo info) {
+			var charaId = InnerMain.Instance.stage.charaBank.CreateId();
+			var prefab = AssetService.Instance.Get<GameObject>(AssetInfos.Get(info.modelName));
+			var go = new GameObject($"blt_{charaId}");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
-			chara.data.layer = Layer.PlayerBullet;
-			chara.data.hpMax = new HitPointMax( 1 );
-			chara.data.hp = new HitPoint( chara.data.hpMax.value );
-			chara.data.hasBlast = true;
-			chara.data.hasDeadArea = true;
-			chara.data.velocity = new Vector3(SpeedByScreen(2f), 0f, 0f);
-			go.name = "blt_" + chara.data.id;
+			chara.data.id = charaId;
+			chara.data.SetInfo(info);
 
-
-			GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.BLT_01_PREFAB), go.transform);
+			GameObject.Instantiate(prefab, go.transform);
 
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = true;
 			rb.useGravity = false;
 
-			go.transform.ForEachChildWithSelf_Ext(chara.data.layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
-			return chara;
-		}
-
-		public static Chara CreateBullet2() {
-			var go = new GameObject("blt");
-			var chara = go.AddComponent<Chara>();
-			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
-			chara.data.layer = Layer.EnemyBullet;
-			chara.data.hpMax = new HitPointMax( 1 );
-			chara.data.hp = new HitPoint( chara.data.hpMax.value );
-			chara.data.hasBlast = true;
-			chara.data.hasDeadArea = true;
-			chara.data.velocity = new Vector3(SpeedByScreen(1f), 0f, 0f);
-			go.name = "blt_" + chara.data.id;
-
-
-			GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.BLT_02_PREFAB), go.transform);
-
-			var rb = go.AddComponent<Rigidbody>();
-			rb.isKinematic = true;
-			rb.useGravity = false;
-
-			go.transform.ForEachChildWithSelf_Ext(chara.data.layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
+			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 			return chara;
 		}
 
 		public static Chara CreateEnemy() {
-			return CreateEnemy("enemy_1");
+			var charaInfo = AssetService.Instance.Get<CharaInfo>(AssetInfos.ENEMY_1_ASSET);
+			return CreateEnemy(charaInfo);
 		}
 
-		public static Chara CreateEnemy(string aiName) {
-			var go = new GameObject("enemy");
+		public static Chara CreateEnemy(CharaInfo info) {
+			var prefab = AssetService.Instance.Get<GameObject>(AssetInfos.Get(info.modelName));
+			var charaId = InnerMain.Instance.stage.charaBank.CreateId();
+
+			var go = new GameObject($"enemy_{charaId}");
 			var chara = go.AddComponent<Chara>();
-			chara.data.id = InnerMain.Instance.stage.charaBank.CreateId();
-			chara.data.layer = Layer.Enemy;
-			HitPointMax hpMax;
-			GameObject prefab;
-			switch (aiName) {
-				default:
-				case "enemy_1":
-				prefab = AssetService.Instance.Get<GameObject>(AssetInfos.ENM_01_PREFAB);
-				hpMax = new HitPointMax( 1 );
-				break;
-
-				case "enemy_2":
-				prefab = AssetService.Instance.Get<GameObject>(AssetInfos.PLY_01_PREFAB);
-				hpMax = new HitPointMax( 20 );
-				break;
-
-				case "enemy_3":
-				prefab = AssetService.Instance.Get<GameObject>(AssetInfos.ENM_01_PREFAB);
-				hpMax = new HitPointMax( 1 );
-				break;
-			}
-			chara.data.hpMax = hpMax;
-			chara.data.hp = new HitPoint( chara.data.hpMax.value );
-			chara.data.hasBlast = true;
-			chara.data.hasDeadArea = true;
-			chara.data.aiName = aiName;
-			go.name = "enemy_" + chara.data.id;
+			chara.data.id = charaId;
+			chara.data.SetInfo(info);
 			chara.data.rotation = Quaternion.LookRotation(Vector3.left);
 			chara.data.velocity = chara.data.rotation * Vector3.forward * SpeedByScreen(0.25f);
 
@@ -121,7 +71,7 @@ namespace Osakana4242.Content.Inners {
 			rb.isKinematic = false;
 			rb.constraints = RigidbodyConstraints.FreezeAll;
 			rb.useGravity = false;
-			go.transform.ForEachChildWithSelf_Ext(chara.data.layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
+			go.transform.ForEachChildWithSelf_Ext(chara.data.Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 
 
 			go.transform.position = new Vector3(

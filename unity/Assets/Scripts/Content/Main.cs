@@ -29,6 +29,11 @@ namespace Osakana4242.Content {
 		bool initialzied_;
 
 		async Task Start() {
+			Debug.Log(
+				$"{nameof(System.GC.MaxGeneration)}: {System.GC.MaxGeneration}\n" +
+				""
+			);
+
 			AssetService.Init();
 			Config.instance = await AssetService.Instance.GetAsync<Config>(AssetInfos.CONFIG_ASSET, cancellationTokenSource.Token);
 			Physics.reuseCollisionCallbacks = true;
@@ -47,6 +52,7 @@ namespace Osakana4242.Content {
 
 		void Update() {
 			if (!initialzied_) return;
+//			System.GC.Collect( 0 );
 			ScreenAService.Instance.AdjustIfNeeded();
 			hud.Update();
 		}

@@ -9,7 +9,7 @@ namespace Osakana4242.Content.Inners {
 	public class Chara : MonoBehaviour {
 		public CharaParam data = new CharaParam();
 
-		void OnTriggerEnter(Collider col ) {
+		void OnTriggerEnter(Collider col) {
 			Debug.Log("self: " + name + ", col: " + col);
 		}
 		void OnCollisionEnter(Collision collision) {
@@ -18,13 +18,13 @@ namespace Osakana4242.Content.Inners {
 
 		public void AddDamage(Damage damage, Chara from) {
 			data.hp = data.hp.AddDamge(damage);
-			if (from.data.layer == Layer.PlayerBullet) {
+			if (from.data.charaType == CharaType.PlayerBullet) {
 				InnerMain.Instance.playerInfo.score += new AddScore(10);
 			}
 			if (!data.hp.isEmpty()) return;
 			data.removeRequested = true;
 			if (data.hasBlast) {
-				if (from.data.layer == Layer.PlayerBullet) {
+				if (from.data.charaType == CharaType.PlayerBullet) {
 					InnerMain.Instance.playerInfo.score += new AddScore(100);
 				}
 				var eft1 = GameObject.Instantiate(AssetService.Instance.Get<GameObject>(AssetInfos.EFT_BLAST_01_PREFAB), gameObject.transform.position, Quaternion.identity);
@@ -39,23 +39,7 @@ namespace Osakana4242.Content.Inners {
 				data.spawnedPosition = data.position;
 			}
 
-			switch (data.aiName) {
-				case "enemy_test_rotation":
-				CharaAI.UpdateEnemyRotationTest(this);
-				break;
-				case "enemy_1":
-				CharaAI.UpdateEnemy1(this);
-				break;
-				case "enemy_2":
-				CharaAI.UpdateEnemy2(this);
-				break;
-				case "enemy_3":
-				CharaAI.UpdateEnemy3(this);
-				break;
-				case "enemy_4":
-				CharaAI.UpdateEnemy4(this);
-				break;
-			}
+			data.aiName.updateFunc(this);
 
 			// 移動.
 			var delta = data.velocity * Stage.Current.time.dt;

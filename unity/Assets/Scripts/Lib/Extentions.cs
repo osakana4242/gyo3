@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Osakana4242.SystemExt {
+
 	public static class EnumUtil<T> {
 		public static readonly T[] valueList = (T[])System.Enum.GetValues(typeof(T));
 		public static T GetValueAt(int index) {

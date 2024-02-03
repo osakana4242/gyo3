@@ -12,11 +12,16 @@ namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
 		static readonly AssetInfo[] preLoadAssetInfoList_g_ = {
-			AssetInfos.BLT_01_PREFAB,
-			AssetInfos.BLT_02_PREFAB,
-			AssetInfos.EFT_BLAST_01_PREFAB,
-			AssetInfos.ENM_01_PREFAB,
+			AssetInfos.PLAYER_ASSET,
 			AssetInfos.PLY_01_PREFAB,
+
+			AssetInfos.BLT_1_ASSET,
+			AssetInfos.BLT_01_PREFAB,
+
+			AssetInfos.BLT_2_ASSET,
+			AssetInfos.BLT_02_PREFAB,
+
+			AssetInfos.EFT_BLAST_01_PREFAB,
 		};
 
 		bool loading_;
@@ -55,7 +60,6 @@ namespace Osakana4242.Content.Inners {
 		public bool IsLoading() => loading_;
 
 		public async Task LoadAssetAsync(CancellationToken cancellationToken) {
-			int n = 0;
 			while (loading_) {
 				cancellationToken.ThrowIfCancellationRequested();
 				await Task.Delay(1);
@@ -63,22 +67,24 @@ namespace Osakana4242.Content.Inners {
 			loading_ = true;
 			try {
 				var tasks = preLoadAssetInfoList_g_.
-					Select(info => AssetService.Instance.GetAsync<GameObject>(info, cancellationToken)).
+					Select(info => AssetService.Instance.GetAsync<Object>(info, cancellationToken)).
 					ForEach_Ext();
+
+				var waveTask = wave.LoadAssetAsync(cancellationToken);
 
 				foreach (var task in tasks) {
 					cancellationToken.ThrowIfCancellationRequested();
 					assets_.Add(await task);
 				}
+
+				await waveTask;
+				loading_ = false;
 			} catch (TaskCanceledException ex) {
 				Debug.Log($"task canceled: {ex}");
 				throw ex;
 			} catch (System.Exception ex) {
 				Debug.LogError($"ex: {ex}");
 				throw ex;
-			} finally {
-				loading_ = false;
-				++n;
 			}
 		}
 
@@ -132,7 +138,7 @@ namespace Osakana4242.Content.Inners {
 				dict.Add(chara.data.id, chara);
 				chara.gameObject.SetActive(true);
 				chara.ApplyTransform();
-				if (chara.data.layer == Layer.Player) {
+				if (chara.data.charaType == CharaType.Player) {
 					InnerMain.Instance.playerInfo.stock = InnerMain.Instance.playerInfo.stock.Spawned();
 					playerId = chara.data.id;
 				}
@@ -171,7 +177,7 @@ namespace Osakana4242.Content.Inners {
 			public bool TryGetEnemy(out Chara chara) {
 				foreach (var kv in dict) {
 					var item = kv.Value;
-					if (item.data.layer == Layer.Enemy) {
+					if (item.data.charaType == CharaType.Enemy) {
 						chara = item;
 						return true;
 					}
@@ -190,9 +196,31 @@ namespace Osakana4242.Content.Inners {
 			public float debugLoopDuration;
 			public Config.TestEnemyWave testEnemy => Config.instance.testEnemy;
 			public int testEnemyIndex;
+			List<CharaInfo> charaInfos_ = new List<CharaInfo>();
+			List<GameObject> models_ = new List<GameObject>();
 
 			public void Init() {
 				startTime = Stage.Current.time.time;
+			}
+
+			public async Task LoadAssetAsync(CancellationToken cancellationToken) {
+				var charaInfoTasks = data.eventList.
+					Where(row => row.type == WaveEventType.Spawn).
+					Select(row => AssetService.Instance.GetAsync<CharaInfo>(AssetInfos.Get($"{row.enemyName}.asset"), cancellationToken)).
+					ForEach_Ext();
+
+				foreach (var charaInfoTask in charaInfoTasks) {
+					cancellationToken.ThrowIfCancellationRequested();
+					charaInfos_.Add(await charaInfoTask);
+				}
+
+				var modelTasks = charaInfos_.
+					Select(charaInfo => AssetService.Instance.GetAsync<GameObject>(AssetInfos.Get(charaInfo.modelName), cancellationToken)).
+					ForEach_Ext();
+
+				foreach (var modelTask in modelTasks) {
+					models_.Add(await modelTask);
+				}
 			}
 
 			public void Update() {
@@ -218,7 +246,8 @@ namespace Osakana4242.Content.Inners {
 					if (row.type == WaveEventType.None) continue;
 					if (!TimeEventData.TryGetEvent(startTime + (row.startTime / 1000f), 0f, preTime, time, out var eventData)) continue;
 					var pos = row.position * 16f;
-					var enemy = CharaFactory.CreateEnemy(row.enemyName);
+					var charaInfo = AssetService.Instance.Get<CharaInfo>(AssetInfos.Get($"{row.enemyName}.asset"));
+					var enemy = CharaFactory.CreateEnemy(charaInfo);
 					enemy.data.position = pos;
 					var vec = Vector2Util.FromDeg(row.angle);
 					enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
@@ -230,7 +259,8 @@ namespace Osakana4242.Content.Inners {
 
 			public void UpdateTestEnemy() {
 				if (!Stage.Current.charaBank.TryGetEnemy(out var enemy)) {
-					enemy = CharaFactory.CreateEnemy(testEnemy.enemyName);
+					var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.Get($"{testEnemy.enemyName}.asset"));
+					enemy = CharaFactory.CreateEnemy(info);
 					enemy.data.position = testEnemy.positionList[testEnemyIndex];
 					enemy.data.rotation = Quaternion.LookRotation(new Vector2(-1f, 0f));
 					InnerMain.Instance.stage.charaBank.Add(enemy);

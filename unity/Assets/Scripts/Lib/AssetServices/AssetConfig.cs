@@ -9,11 +9,22 @@ namespace Osakana4242.Lib.AssetServices {
 		static string tmpl_g_ = @"
 /// genereated from <see cref=""{0}"" />.
 
+using System.Collections.Generic;
 using {1};
 
 namespace {2} {{
 	public static class {3} {{
+		static readonly Dictionary<string, AssetInfo> dict_g = new Dictionary<string, AssetInfo>();
+
+		static AssetInfo Add(AssetInfo info) {{
+			dict_g.Add(info.fileName, info);
+			return info;
+		}}
+
+		public static AssetInfo Get(string name) => dict_g[name];
+
 {4}
+
 	}}
 }}
 	";
@@ -51,7 +62,7 @@ namespace {2} {{
 				varName = varName.ToUpper();
 				varName = varName.Replace(" ", "_");
 				varName = varName.Replace(".", "_");
-				sb.Append($"		public static readonly {nameof(AssetInfo)} {varName} = new (\"{info.pathFromAssets}\", typeof({info.type.FullName}));\n");
+				sb.Append($"		public static readonly {nameof(AssetInfo)} {varName} = Add(new (\"{info.pathFromAssets}\", typeof({info.type.FullName})));\n");
 			}
 			var src = string.Format(tmpl_g_,
 				typeof(AssetConfig).FullName,

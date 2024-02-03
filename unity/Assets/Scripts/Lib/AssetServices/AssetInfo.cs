@@ -27,6 +27,15 @@ namespace Osakana4242.Lib.AssetServices {
 			}
 		}
 
+		public void ThrowIfCantCast<T>() {
+			var otherT = typeof(T);
+			if (type == otherT) return;
+			if (!type.IsSubclassOf(otherT)) {
+				var ex = new System.InvalidCastException($"type: {typeof(T).Name} にはキャスト出来ない. name: {fileName}, type: {type}");
+				throw ex;
+			}
+		}
+
 #if UNITY_EDITOR
 		public static AssetInfo Editor_CreateByGUID(string guid) {
 			var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);

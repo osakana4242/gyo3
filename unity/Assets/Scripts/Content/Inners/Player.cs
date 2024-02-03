@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.SystemExt;
 using Osakana4242.UnityEngineExt;
+using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content.Inners {
 	public class Player : MonoBehaviour {
@@ -144,8 +145,11 @@ namespace Osakana4242.Content.Inners {
 					shotTime += Time.deltaTime;
 				} else {
 					shotTime = 0f;
-					var blt = CharaFactory.CreateBullet();
+					var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.BLT_1_ASSET);
+					var blt = CharaFactory.CreateBullet(info);
 					blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
+					blt.data.velocity = new Vector3( CharaFactory.SpeedByScreen( 2f ), 0f, 0f );
+
 					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
 			}
@@ -183,7 +187,8 @@ namespace Osakana4242.Content.Inners {
 					( 20, CharaFactory.SpeedByScreen( 1.5f ) ),
 				};
 				foreach (var bullet in bullets) {
-					var blt = CharaFactory.CreateBullet();
+					var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.BLT_1_ASSET);
+					var blt = CharaFactory.CreateBullet(info);
 					blt.data.position = chara.data.position + new Vector3(0f, Random.Range(-2f, 2f), 0f);
 					blt.data.rotation = chara.data.rotation * Quaternion.AngleAxis(bullet.angle, new Vector3(1, 0, 0));
 					blt.data.velocity = blt.data.rotation * Vector3.forward * bullet.speed;

@@ -27,16 +27,23 @@ namespace Osakana4242.Lib.AssetServices {
 		public async Task<T> GetAsync<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
 			++loadingCount_;
 			try {
+				info.ThrowIfCantCast<T>();
 				if (!holderDict_.TryGetValue(info.fileName, out var holder)) {
 					holder = new(info);
 					holderDict_.Add(info.fileName, holder);
 				}
 				return await holder.GetAsync<T>(cancellationToken);
+			} catch ( TaskCanceledException ) {
+				throw;
+			} catch ( System.Exception ex ) {
+				Debug.LogError( $"ex: {ex}" );
+				throw ex;
 			} finally {
 				--loadingCount_;
 			}
 		}
 		public T Get<T>(AssetInfo info) where T : Object {
+			info.ThrowIfCantCast<T>();
 			if (!holderDict_.TryGetValue(info.fileName, out var holder))
 				throw new System.Exception($"アセットがキャッシャされていない. name: {info.fileName}");
 			return holder.GetAsset<T>();

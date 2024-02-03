@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c253c396681acc84593e1f439b672b61, type: 3}
   m_Name: asset_config
   m_EditorClassIdentifier: 
-  targetDirectory: {fileID: 102900000, guid: 9d1b5fcc214616747b439ec0603eed38, type: 3}
+  targetDirectory_: {fileID: 102900000, guid: 9d1b5fcc214616747b439ec0603eed38, type: 3}
+  outDirectory_: {fileID: 102900000, guid: bff6be3e232b5f8429f0a828c0627c13, type: 3}
+  className_: Osakana4242.Content.AssetInfos
