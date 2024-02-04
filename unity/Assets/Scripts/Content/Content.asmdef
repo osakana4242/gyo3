@@ -1,9 +1,12 @@
 {
     "name": "Content",
+    "rootNamespace": "",
     "references": [
         "GUID:2a1ba70369d6917448b18078ebe580be",
         "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:33661e06c33d31b4c9223810bf503247"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

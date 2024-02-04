@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Lib.AssetServices {
 	public class AssetHolder {
@@ -51,14 +52,14 @@ namespace Osakana4242.Lib.AssetServices {
 			asset_ = null;
 		}
 
-		static async Task<T> GetAsyncCore<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
+		static async UniTask<T> GetAsyncCore<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
 			info.ThrowIfCantCast<T>();
-			await Task.Delay(1000);
+			await UniTask.Delay(1000);
 			cancellationToken.ThrowIfCancellationRequested();
 			var req = Resources.LoadAsync<T>(info.resourceName.value);
 			Debug.Log($"GetAsyncStart {info.pathFromAssets}");
 			while (req.isDone) {
-				await Task.Delay(1);
+				await UniTask.Delay(1);
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			var asset = req.asset;
@@ -70,13 +71,13 @@ namespace Osakana4242.Lib.AssetServices {
 			return castedAsset;
 		}
 
-		public async Task<T> GetAsync<T>(CancellationToken cancellationToken) where T : Object {
+		public async UniTask<T> GetAsync<T>(CancellationToken cancellationToken) where T : Object {
 			if (!IsNeedLoadStart())
 				return await GetFromCachedAsync<T>(cancellationToken);
 			return await GetFromFileAsync<T>(cancellationToken);
 		}
 
-		async Task<T> GetFromFileAsync<T>(CancellationToken cancellationToken) where T : Object {
+		async UniTask<T> GetFromFileAsync<T>(CancellationToken cancellationToken) where T : Object {
 			loading_ = true;
 			AddWatcher();
 			try {
@@ -95,12 +96,12 @@ namespace Osakana4242.Lib.AssetServices {
 			}
 		}
 
-		async Task<T> GetFromCachedAsync<T>(CancellationToken cancellationToken) {
+		async UniTask<T> GetFromCachedAsync<T>(CancellationToken cancellationToken) {
 			AddWatcher();
 			try {
 				while (loading_) {
 					cancellationToken.ThrowIfCancellationRequested();
-					await Task.Delay(1);
+					await UniTask.Delay(1);
 				}
 				var asset1 = GetAsset<T>();
 				return asset1;

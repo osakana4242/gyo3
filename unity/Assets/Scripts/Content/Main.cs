@@ -7,6 +7,8 @@ using Osakana4242.UnityEngineExt;
 using Osakana4242.Content.Inners;
 using System.Threading;
 using Osakana4242.Lib.AssetServices;
+using Cysharp.Threading.Tasks;
+using Cysharp.Text;
 
 namespace Osakana4242.Content {
 	public class Main : MonoBehaviour {
@@ -28,14 +30,17 @@ namespace Osakana4242.Content {
 		public static Main Instance => instance_;
 		bool initialzied_;
 
-		async Task Start() {
+		async UniTask Start() {
+			Debug.Log( $"{typeof(Main)} - Start" );
 			Debug.Log(
 				$"{nameof(System.GC.MaxGeneration)}: {System.GC.MaxGeneration}\n" +
 				""
 			);
 
 			AssetService.Init();
+			Debug.Log( $"{typeof(Main)} - Start2" );
 			Config.instance = await AssetService.Instance.GetAsync<Config>(AssetInfos.CONFIG_ASSET, cancellationTokenSource.Token);
+			Debug.Log( $"{typeof(Main)} - Start3" );
 			Physics.reuseCollisionCallbacks = true;
 
 			ScreenAService.Init();

@@ -9,6 +9,7 @@ using Osakana4242.SystemExt;
 using System.Linq;
 using System.Threading;
 using Osakana4242.Lib.AssetServices;
+using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Content.Inners {
 	public static class IEnumrableExt {
@@ -67,7 +68,7 @@ namespace Osakana4242.Content.Inners {
 			ElapsedTime elapsedTime = default;
 			GameObject title = null;
 			GameObject touchToStart = null;
-			Task titleTask = null;
+			UniTask titleTask = default;
 			CancellationTokenSource cancellationTokenSource = default;
 
 			return new StateBase() {
@@ -93,7 +94,7 @@ namespace Osakana4242.Content.Inners {
 				},
 			};
 
-			async Task loadAsync(CancellationToken cancellationToken) {
+			async UniTask loadAsync(CancellationToken cancellationToken) {
 				var titlePrefab = AssetService.Instance.GetAsync<GameObject>(AssetInfos.TITLE_PREFAB, cancellationToken);
 				var touchToStartPrefab = AssetService.Instance.GetAsync<GameObject>(AssetInfos.TITLE_TOUCH_TO_START_PREFAB, cancellationToken);
 				cancellationToken.ThrowIfCancellationRequested();
@@ -181,7 +182,7 @@ namespace Osakana4242.Content.Inners {
 				},
 			};
 
-			async Task loadAsync(CancellationToken cancellationToken) {
+			async UniTask loadAsync(CancellationToken cancellationToken) {
 				var gameOverPrefab = AssetService.Instance.GetAsync<GameObject>(AssetInfos.GAME_OVER_PREFAB, cancellationToken);
 				cancellationToken.ThrowIfCancellationRequested();
 				gameOver = GameObject.Instantiate(await gameOverPrefab, InnerMain.instance_.hudTr);

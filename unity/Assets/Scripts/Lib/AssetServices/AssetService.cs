@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Lib.AssetServices {
 	public class AssetService {
@@ -24,8 +25,9 @@ namespace Osakana4242.Lib.AssetServices {
 
 		public bool IsBusy() => 0 < loadingCount_;
 
-		public async Task<T> GetAsync<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
+		public async UniTask<T> GetAsync<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
 			++loadingCount_;
+			Debug.Log($"increment loadingCount: {loadingCount_}");
 			try {
 				info.ThrowIfCantCast<T>();
 				if (!holderDict_.TryGetValue(info.fileName, out var holder)) {
@@ -39,6 +41,7 @@ namespace Osakana4242.Lib.AssetServices {
 				Debug.LogError( $"ex: {ex}" );
 				throw ex;
 			} finally {
+				Debug.Log($"decrement loadingCount: {loadingCount_}");
 				--loadingCount_;
 			}
 		}

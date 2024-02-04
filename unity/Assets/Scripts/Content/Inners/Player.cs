@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using Osakana4242.SystemExt;
 using Osakana4242.UnityEngineExt;
 using Osakana4242.Lib.AssetServices;
+using Cysharp.Text;
 
 namespace Osakana4242.Content.Inners {
 	public class Player : MonoBehaviour {
@@ -234,6 +235,10 @@ namespace Osakana4242.Content.Inners {
 			return new WeaponChargeProgress(0f, timeMax);
 		}
 
+		public void WritePercentStringTo(ref Utf16ValueStringBuilder sb) {
+			var percent = (int)(time * 100 / timeMax);
+			sb.AppendFormat( "{0}%", percent );
+		}
 		public string ToPercentString() {
 			var percent = (int)(time * 100 / timeMax);
 			return $"{percent}%";

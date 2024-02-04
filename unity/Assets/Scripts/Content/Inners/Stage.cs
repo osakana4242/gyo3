@@ -7,6 +7,7 @@ using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
 using System.Threading;
 using Osakana4242.Lib.AssetServices;
+using Cysharp.Threading.Tasks;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
@@ -58,10 +59,10 @@ namespace Osakana4242.Content.Inners {
 
 		public bool IsLoading() => loading_;
 
-		public async Task LoadAssetAsync(CancellationToken cancellationToken) {
+		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
 			while (loading_) {
 				cancellationToken.ThrowIfCancellationRequested();
-				await Task.Delay(1);
+				await UniTask.Delay(1);
 			}
 			loading_ = true;
 			try {
@@ -202,7 +203,7 @@ namespace Osakana4242.Content.Inners {
 				startTime = Stage.Current.time.time;
 			}
 
-			public async Task LoadAssetAsync(CancellationToken cancellationToken) {
+			public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
 				var charaInfoTasks = data.eventList.
 					Where(row => row.type == WaveEventType.Spawn).
 					Select(row => AssetService.Instance.GetAsync<CharaInfo>(row.GetEnemyCharaInfoAssetInfo(), cancellationToken)).
