@@ -10,26 +10,6 @@ namespace Osakana4242.Content.Inners {
 		public WeaponChargeProgress weaponChargeProgress = new WeaponChargeProgress(0f, 1f);
 	}
 
-	public readonly struct PlayerStock {
-		public readonly int restCount;
-		public readonly int maxCount;
-		public PlayerStock(int maxCount, int restCount) {
-			if (maxCount < 0) throw new System.ArgumentException($"maxCount: {maxCount}");
-			this.maxCount = maxCount;
-			this.restCount = restCount;
-		}
-
-		public PlayerStock(int maxCount) : this(maxCount, maxCount) { }
-
-		public PlayerStock Spawned() {
-			if (IsEmpty())
-				throw new System.Exception("empty");
-			return new PlayerStock(restCount - 1, maxCount);
-		}
-
-		public bool IsEmpty() => restCount <= 0;
-	}
-
 	public readonly struct AddScore {
 		public readonly int value;
 		public AddScore(int value) {
