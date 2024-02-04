@@ -42,7 +42,7 @@ namespace Osakana4242.Content.Inners {
 			Clear();
 			wave.Init();
 			if (!loading_) {
-				_ = LoadAssetAsync(cancellationTokenSource.Token);
+				LoadAssetAsync(cancellationTokenSource.Token).Forget();
 			}
 		}
 
@@ -61,8 +61,7 @@ namespace Osakana4242.Content.Inners {
 
 		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
 			while (loading_) {
-				cancellationToken.ThrowIfCancellationRequested();
-				await UniTask.Delay(1);
+				await UniTask.NextFrame(cancellationToken: cancellationToken);
 			}
 			loading_ = true;
 			try {
@@ -289,7 +288,7 @@ namespace Osakana4242.Content.Inners {
 		public float angle;
 
 		public Vector2 Position => new Vector2(positionX, positionY);
-		public AssetInfo GetEnemyCharaInfoAssetInfo() =>AssetInfos.Get($"{enemyName}.asset");
+		public AssetInfo GetEnemyCharaInfoAssetInfo() => AssetInfos.Get($"{enemyName}.asset");
 		public CharaInfo GetEnemyCharaInfo() => AssetService.Instance.Get<CharaInfo>(GetEnemyCharaInfoAssetInfo());
 	}
 

@@ -68,14 +68,13 @@ namespace Osakana4242.Content.Inners {
 			ElapsedTime elapsedTime = default;
 			GameObject title = null;
 			GameObject touchToStart = null;
-			UniTask titleTask = default;
 			CancellationTokenSource cancellationTokenSource = default;
 
 			return new StateBase() {
 				Id = StateId.Title,
 				Enter = () => {
 					cancellationTokenSource = new();
-					titleTask = loadAsync(cancellationTokenSource.Token);
+					loadAsync(cancellationTokenSource.Token).Forget();
 					stage.Init();
 					elapsedTime = ElapsedTime.empty;
 				},
@@ -168,7 +167,7 @@ namespace Osakana4242.Content.Inners {
 				Enter = () => {
 					cancellationTokenSource = new();
 					time = ElapsedTime.empty;
-					_ = loadAsync(cancellationTokenSource.Token);
+					loadAsync(cancellationTokenSource.Token).Forget();
 				},
 				Update = () => {
 					time = time.Evaluete(Time.deltaTime);

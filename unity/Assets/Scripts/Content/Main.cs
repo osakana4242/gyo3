@@ -32,10 +32,11 @@ namespace Osakana4242.Content {
 		bool initialzied_;
 
 		async UniTask Start() {
-			Debug.Log( $"{typeof(Main)} - Start" );
+			Debug.Log($"{typeof(Main)} - Start");
 			Debug.Log(
 				$"{nameof(System.GC.MaxGeneration)}: {System.GC.MaxGeneration}\n" +
 				""
+
 			);
 
 			// ビルドした版だと PlayerLoopHelper.Initialize を明示的に呼ぶ必要があるっぽい.
@@ -43,10 +44,11 @@ namespace Osakana4242.Content {
 			// System.InvalidOperationException: Target playerLoopTiming is not injected. Please check PlayerLoopHelper.Initialize. PlayerLoopTiming:Update
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
 			PlayerLoopHelper.Initialize(ref loop);
+
 			AssetService.Init();
-			Debug.Log( $"{typeof(Main)} - Start2" );
+			Debug.Log($"{typeof(Main)} - Start2");
 			Config.instance = await AssetService.Instance.GetAsync<Config>(AssetInfos.CONFIG_ASSET, cancellationTokenSource.Token);
-			Debug.Log( $"{typeof(Main)} - Start3" );
+			Debug.Log($"{typeof(Main)} - Start3");
 			Physics.reuseCollisionCallbacks = true;
 
 			ScreenAService.Init();
@@ -63,7 +65,7 @@ namespace Osakana4242.Content {
 
 		void Update() {
 			if (!initialzied_) return;
-//			System.GC.Collect( 0 );
+			//			System.GC.Collect( 0 );
 			ScreenAService.Instance.AdjustIfNeeded();
 			hud.Update();
 		}

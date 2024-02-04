@@ -1,14 +1,15 @@
 ﻿
-using UnityEngine;
-using System.Threading.Tasks;
+
+using System;
 using System.Threading;
+using UnityEngine;
 using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Lib.AssetServices {
 	public class AssetHolder {
 		public readonly AssetInfo info;
 		readonly System.WeakReference assetRef_ = new(null);
-		Object asset_;
+		UnityEngine.Object asset_;
 		bool loading_;
 		int watcherCount_;
 		System.Exception ex_;
@@ -37,7 +38,7 @@ namespace Osakana4242.Lib.AssetServices {
 			asset = (T)assetRef_.Target;
 			return true;
 		}
-		void SetAsset(Object asset) {
+		void SetAsset(UnityEngine.Object asset) {
 			this.asset_ = asset;
 			this.assetRef_.Target = asset;
 		}
@@ -52,42 +53,36 @@ namespace Osakana4242.Lib.AssetServices {
 			asset_ = null;
 		}
 
-		static async UniTask<T> GetAsyncCore<T>(AssetInfo info, CancellationToken cancellationToken) where T : Object {
+		static async UniTask<T> GetAsyncCore<T>(AssetInfo info, CancellationToken cancellationToken) where T : UnityEngine.Object {
+			Debug.Log($"{nameof(GetAsyncCore)} - start: {info.pathFromAssets}");
 			info.ThrowIfCantCast<T>();
-			await UniTask.Delay(1000);
+			await UniTask.Delay(System.TimeSpan.FromSeconds(1), cancellationToken: cancellationToken);
 			cancellationToken.ThrowIfCancellationRequested();
-			var req = Resources.LoadAsync<T>(info.resourceName.value);
-			Debug.Log($"GetAsyncStart {info.pathFromAssets}");
-			while (req.isDone) {
-				await UniTask.Delay(1);
-				cancellationToken.ThrowIfCancellationRequested();
-			}
-			var asset = req.asset;
-			Debug.Log($"GetAsyncEnd {info.pathFromAssets}, asset: {asset}");
+			var asset = await Resources.LoadAsync<T>(info.resourceName.value);
 			if (null == asset) {
 				throw new System.Exception($"リソースが見つからない. name: '{info}'");
 			}
 			var castedAsset = (T)asset;
+			Debug.Log($"{nameof(GetAsyncCore)} - completed: {info.pathFromAssets}");
 			return castedAsset;
 		}
 
-		public async UniTask<T> GetAsync<T>(CancellationToken cancellationToken) where T : Object {
+		public async UniTask<T> GetAsync<T>(CancellationToken cancellationToken) where T : UnityEngine.Object {
 			if (!IsNeedLoadStart())
 				return await GetFromCachedAsync<T>(cancellationToken);
 			return await GetFromFileAsync<T>(cancellationToken);
 		}
 
-		async UniTask<T> GetFromFileAsync<T>(CancellationToken cancellationToken) where T : Object {
+		async UniTask<T> GetFromFileAsync<T>(CancellationToken cancellationToken) where T : UnityEngine.Object {
 			loading_ = true;
 			AddWatcher();
 			try {
 				var asset = await GetAsyncCore<T>(info, cancellationToken);
-				Debug.Log($"cached {info.pathFromAssets}");
 				SetAsset(asset);
 				return asset;
-			} catch ( TaskCanceledException ) {
+			} catch (OperationCanceledException) {
 				throw;
-			} catch ( System.Exception ex ) {
+			} catch (System.Exception ex) {
 				ex_ = ex;
 				throw ex;
 			} finally {
