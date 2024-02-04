@@ -9,6 +9,7 @@ using System.Threading;
 using Osakana4242.Lib.AssetServices;
 using Cysharp.Threading.Tasks;
 using Cysharp.Text;
+using UnityEngine.LowLevel;
 
 namespace Osakana4242.Content {
 	public class Main : MonoBehaviour {
@@ -37,6 +38,11 @@ namespace Osakana4242.Content {
 				""
 			);
 
+			// ビルドした版だと PlayerLoopHelper.Initialize を明示的に呼ぶ必要があるっぽい.
+			// UniTask.Delay の使用時に次の例外が発生した.
+			// System.InvalidOperationException: Target playerLoopTiming is not injected. Please check PlayerLoopHelper.Initialize. PlayerLoopTiming:Update
+			var loop = PlayerLoop.GetCurrentPlayerLoop();
+			PlayerLoopHelper.Initialize(ref loop);
 			AssetService.Init();
 			Debug.Log( $"{typeof(Main)} - Start2" );
 			Config.instance = await AssetService.Instance.GetAsync<Config>(AssetInfos.CONFIG_ASSET, cancellationTokenSource.Token);
