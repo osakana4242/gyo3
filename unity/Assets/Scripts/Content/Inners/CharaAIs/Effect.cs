@@ -10,8 +10,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 		public static void Update(Chara self) {
 			TimeEventData evtData;
 			var preTime = self.data.stateTime;
-			self.data.stateTime = Stage.Current.time.time - self.data.spawnedTime;
-
+			self.data.stateTime += Stage.Current.time.dt;
 
 			if (CharaAI.IsEnterTime(0f, preTime, self.data.stateTime)) {
 				var info = self.GetComponentInChildren<Osakana4242.Content.Inners.Effect>();

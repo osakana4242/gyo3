@@ -17,8 +17,8 @@ MonoBehaviour:
     main: {x: 160, y: 120}
     sub: {x: 160, y: 0}
   testEnemy:
-    enabled: 0
-    enemyName: enemy_3
+    enabled: 1
+    enemyName: enemy_boss_01
     positionList:
     - {x: 80, y: 0}
     - {x: 80, y: 40}

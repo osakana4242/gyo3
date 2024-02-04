@@ -25,6 +25,7 @@ namespace Osakana4242.Content {
 		public static readonly AssetInfo ENEMY_2_ASSET = Add(new ("Assets/Resources/chara/enemy_2.asset", typeof(Osakana4242.Content.Inners.CharaInfo)));
 		public static readonly AssetInfo ENEMY_3_ASSET = Add(new ("Assets/Resources/chara/enemy_3.asset", typeof(Osakana4242.Content.Inners.CharaInfo)));
 		public static readonly AssetInfo ENEMY_4_ASSET = Add(new ("Assets/Resources/chara/enemy_4.asset", typeof(Osakana4242.Content.Inners.CharaInfo)));
+		public static readonly AssetInfo ENEMY_BOSS_01_ASSET = Add(new ("Assets/Resources/chara/enemy_boss_01.asset", typeof(Osakana4242.Content.Inners.CharaInfo)));
 		public static readonly AssetInfo ENM_01_PREFAB = Add(new ("Assets/Resources/mdl/enm_01.prefab", typeof(UnityEngine.GameObject)));
 		public static readonly AssetInfo EXIT_BTN_PREFAB = Add(new ("Assets/Resources/exit_btn.prefab", typeof(UnityEngine.GameObject)));
 		public static readonly AssetInfo GAME_OVER_PREFAB = Add(new ("Assets/Resources/game_over.prefab", typeof(UnityEngine.GameObject)));

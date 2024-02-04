@@ -205,7 +205,12 @@ namespace Osakana4242.Content.Inners {
 			public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
 				var charaInfoTasks = data.eventList.
 					Where(row => row.type == WaveEventType.Spawn).
-					Select(row => AssetService.Instance.GetAsync<CharaInfo>(row.GetEnemyCharaInfoAssetInfo(), cancellationToken)).
+					Select(row => row.GetEnemyCharaInfoAssetInfo()).
+					Union(new AssetInfo[] {
+						AssetInfos.Get($"{testEnemy.enemyName}.asset")
+					}).
+					Distinct().
+					Select(row => AssetService.Instance.GetAsync<CharaInfo>(row, cancellationToken)).
 					ForEach_Ext();
 
 				foreach (var charaInfoTask in charaInfoTasks) {
@@ -220,6 +225,8 @@ namespace Osakana4242.Content.Inners {
 				foreach (var modelTask in modelTasks) {
 					models_.Add(await modelTask);
 				}
+
+
 			}
 
 			public void Update() {
@@ -250,7 +257,7 @@ namespace Osakana4242.Content.Inners {
 					enemy.data.position = pos;
 					var vec = Vector2Util.FromDeg(row.angle);
 					enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
-					enemy.data.velocity = enemy.data.rotation * Vector3.forward;
+					enemy.data.velocity = Vector3.zero;
 
 					InnerMain.Instance.stage.charaBank.Add(enemy);
 				}
@@ -322,13 +329,13 @@ namespace Osakana4242.Content.Inners {
 			evtData.type = TimeEventType.None;
 			float left = startTime;
 			float right = left + duration;
-			if (currentTime < left) {
+			if (currentTime <= left) {
 				return false;
 			}
 			if (right <= preTime) {
 				return false;
 			}
-			if (preTime < left && left <= currentTime) {
+			if (preTime <= left && left < currentTime) {
 				evtData.type = TimeEventType.Enter;
 				return true;
 			}

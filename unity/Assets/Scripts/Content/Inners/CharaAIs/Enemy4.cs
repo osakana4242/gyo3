@@ -11,7 +11,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 		public static void Update(Chara self) {
 			TimeEventData evtData;
 			var preTime = self.data.stateTime;
-			self.data.stateTime = Stage.Current.time.time - self.data.spawnedTime;
+			self.data.stateTime += Stage.Current.time.dt;
 
 			// 直進.
 			if (TimeEventData.TryGetEvent(0.0f, 10f, preTime, self.data.stateTime, out evtData)) {

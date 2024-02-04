@@ -9,7 +9,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 	public class Enemy2 {
 		public static void Update(Chara self) {
 			var preTime = self.data.stateTime;
-			self.data.stateTime = Stage.Current.time.time - self.data.spawnedTime;
+			self.data.stateTime += Stage.Current.time.dt;
 			TimeEventData evtData;
 
 			if (TimeEventData.TryGetEvent(0f, 0.5f, preTime, self.data.stateTime, out evtData)) {

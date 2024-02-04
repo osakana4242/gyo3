@@ -14,6 +14,7 @@ namespace Osakana4242.Content.Inners {
 			{ "enemy_2".ToHashKey_Ext(), CharaAIs.Enemy2.Update },
 			{ "enemy_3".ToHashKey_Ext(), CharaAIs.Enemy3.Update },
 			{ "enemy_4".ToHashKey_Ext(), CharaAIs.Enemy4.Update },
+			{ "enemy_5".ToHashKey_Ext(), CharaAIs.Enemy5.Update },
 		};
 		static readonly System.Action<Chara> emptyFunc_g_ = (_) => { };
 		public static readonly AIName Empty = new AIName();
@@ -24,7 +25,7 @@ namespace Osakana4242.Content.Inners {
 		AIName() {
 		}
 		public AIName(string name) {
-			if ( string.IsNullOrEmpty( name ) )
+			if (string.IsNullOrEmpty(name))
 				return;
 			this.name = name;
 			if (!updateFuncs_g_.TryGetValue(name.ToHashKey_Ext(), out var func)) throw new System.ArgumentException($"not found. {name}");
@@ -52,20 +53,21 @@ namespace Osakana4242.Content.Inners {
 		public AIName aiName = AIName.Empty;
 		public float spawnedTime;
 		public Vector3 spawnedPosition;
-		public float duration;
-		public float stateTime = -1f;
+		public float duration = float.MaxValue;
+		public float stateTime = 0f;
 		public int state;
 		public bool removeRequested;
+		public Vector3[] vector3s = new Vector3[4];
 
 		public int Layer => charaType.GetLayer();
 
 		public void SetInfo(CharaInfo info) {
 			this.charaType = info.charaType;
-			this.hpMax = new HitPointMax( info.hp );
-			this.hp = new HitPoint( this.hpMax.value );
+			this.hpMax = new HitPointMax(info.hp);
+			this.hp = new HitPoint(this.hpMax.value);
 			this.hasBlast = info.hasBlast;
 			this.hasDeadArea = info.hasDeadArea;
-			this.aiName = new AIName( info.aiName );
+			this.aiName = new AIName(info.aiName);
 		}
 
 		public void SetSortingOrderTo(GameObject go) {

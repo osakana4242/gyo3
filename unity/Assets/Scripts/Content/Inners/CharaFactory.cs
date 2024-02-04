@@ -84,7 +84,7 @@ namespace Osakana4242.Content.Inners {
 			chara.data.id = charaId;
 			chara.data.SetInfo(info);
 			chara.data.rotation = Quaternion.LookRotation(Vector3.left);
-			chara.data.velocity = chara.data.rotation * Vector3.forward * SpeedByScreen(0.25f);
+			// chara.data.velocity = chara.data.rotation * Vector3.forward * SpeedByScreen(0.25f);
 
 			var rb = go.AddComponent<Rigidbody>();
 			rb.isKinematic = false;

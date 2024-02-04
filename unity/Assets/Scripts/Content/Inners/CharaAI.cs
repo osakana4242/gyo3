@@ -44,7 +44,14 @@ namespace Osakana4242.Content.Inners {
 			return pre < target && target <= current;
 		}
 
-
+		/// <summary>指定距離を通りすぎないようにスピードを抑制する</summary>
+		public static float ClampSpeed(float distance, float speed, float dt) {
+			if (dt <= 0) return speed;
+			var movedDistance = dt * speed;
+			if (movedDistance <= distance) return speed;
+			var clampedSpeed = distance / dt;
+			return clampedSpeed;
+		}
 	}
 
 	public struct ShotParam {
