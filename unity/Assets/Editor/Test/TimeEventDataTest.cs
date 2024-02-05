@@ -13,26 +13,30 @@ namespace Osakana4242.Content.Inners.Tests {
 	public class TimeEventDataTest {
 		[Test]
 		public void TryGetEventTest() {
-			var evtData = default(TimeEventData);
-			Assert.IsFalse(TimeEventData.TryGetEvent(1.0f, 2.0f, 0.9f, 1.0f, out evtData));
+			var evtData = default(TimeEvent);
+
+			Assert.IsFalse(TimeEvent.TryGetEvent(1.0f, 2.0f, 0.9f, 1.0f, out evtData));
 			Assert.AreEqual(TimeEventType.None, evtData.type);
 
-			Assert.IsFalse(TimeEventData.TryGetEvent(1.0f, 2.0f, 1.0f, 1.0f, out evtData));
+			Assert.IsFalse(TimeEvent.TryGetEvent(1.0f, 2.0f, 1.0f, 1.0f, out evtData));
 			Assert.AreEqual(TimeEventType.None, evtData.type);
 
-			Assert.IsTrue(TimeEventData.TryGetEvent(1.0f, 2.0f, 1.0f, 1.1f, out evtData));
+			Assert.IsTrue(TimeEvent.TryGetEvent(1.0f, 2.0f, 1.0f, 1.1f, out evtData));
 			Assert.AreEqual(TimeEventType.Enter, evtData.type);
 
-			Assert.IsTrue(TimeEventData.TryGetEvent(1.0f, 2.0f, 1.1f, 1.1f, out evtData));
+			Assert.IsTrue(TimeEvent.TryGetEvent(1.0f, 2.0f, 1.1f, 1.1f, out evtData));
 			Assert.AreEqual(TimeEventType.Loop, evtData.type);
 
-			Assert.IsTrue(TimeEventData.TryGetEvent(1.0f, 2.0f, 2.9f, 3.0f, out evtData));
+			Assert.IsTrue(TimeEvent.TryGetEvent(1.0f, 2.0f, 2.9f, 3.0f, out evtData));
+			Assert.AreEqual(TimeEventType.Loop, evtData.type);
+
+			Assert.IsTrue(TimeEvent.TryGetEvent(1.0f, 2.0f, 3.0f, 3.0f, out evtData));
+			Assert.AreEqual(TimeEventType.Loop, evtData.type);
+
+			Assert.IsTrue(TimeEvent.TryGetEvent(1.0f, 2.0f, 3.0f, 3.1f, out evtData));
 			Assert.AreEqual(TimeEventType.Exit, evtData.type);
 
-			Assert.IsFalse(TimeEventData.TryGetEvent(1.0f, 2.0f, 3.0f, 3.0f, out evtData));
-			Assert.AreEqual(TimeEventType.None, evtData.type);
-
-			Assert.IsFalse(TimeEventData.TryGetEvent(1.0f, 2.0f, 3.0f, 3.1f, out evtData));
+			Assert.IsFalse(TimeEvent.TryGetEvent(1.0f, 2.0f, 3.1f, 3.1f, out evtData));
 			Assert.AreEqual(TimeEventType.None, evtData.type);
 
 		}

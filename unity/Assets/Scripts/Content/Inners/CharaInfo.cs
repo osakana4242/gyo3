@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
+using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Osakana4242.UnityEngineExt;
-using Osakana4242.Lib.AssetServices;
-using System.Threading.Tasks;
 
 namespace Osakana4242.Content.Inners {
 	public class CharaInfo : ScriptableObject {
@@ -15,5 +11,11 @@ namespace Osakana4242.Content.Inners {
 		public bool hasBlast;
 		public string modelName;
 		public string aiName;
+		public Bullet[] bullet;
+
+		[Serializable]
+		public class Bullet {
+			public float speed;
+		}
 	}
 }

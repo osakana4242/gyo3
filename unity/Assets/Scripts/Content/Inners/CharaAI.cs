@@ -9,23 +9,29 @@ using Osakana4242.Lib.AssetServices;
 namespace Osakana4242.Content.Inners {
 
 	public class CharaAI {
-		public static void ShotToPlayer(Chara self, ShotParam prm) {
+		public static Vector3 GetPlayerPosition(Chara self) {
+			if (!Stage.Current.charaBank.TryGetPlayer(out var player)) {
+				// 取れない場合は正面位置で代用する.
+				return self.data.position + self.data.rotation * Vector3.forward;
+			}
+			return player.data.position;
+		}
+
+		public static void ShotToPosition(Chara self, Vector3 target, ShotParam prm) {
 			var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.BLT_2_ASSET);
 			var blt = CharaFactory.CreateBullet(info);
 			Stage.Current.charaBank.Add(blt);
 			blt.data.position = self.data.position;
-			Vector3 target;
-			if (Stage.Current.charaBank.TryGetPlayer(out var player)) {
-				target = player.data.position;
-			} else {
-				target = self.data.position + self.data.rotation * Vector3.forward;
-			}
 			Vector3 toTarget = (target - blt.data.position).ToXY0_Ext();
 			blt.data.rotation = Quaternion.LookRotation(toTarget);
 			blt.data.position += blt.data.rotation * prm.offsetPos;
 			blt.data.rotation *= prm.offsetRot;
-			blt.data.velocity = blt.data.rotation * Vector3.forward * 60f;
 			blt.ApplyTransform();
+		}
+
+		public static void ShotToPlayer(Chara self, ShotParam prm) {
+			var target = GetPlayerPosition(self);
+			ShotToPosition(self, target, prm);
 		}
 
 		public static Quaternion LookAtAngle(Chara self, Vector3 position, float maxDelta) {
@@ -38,10 +44,6 @@ namespace Osakana4242.Content.Inners {
 
 		public static Vector3 GetPositionFromScreenCenter(Vector3 position) {
 			return position;
-		}
-
-		public static bool IsEnterTime(float target, float pre, float current) {
-			return pre < target && target <= current;
 		}
 
 		/// <summary>指定距離を通りすぎないようにスピードを抑制する</summary>

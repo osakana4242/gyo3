@@ -17,5 +17,6 @@ MonoBehaviour:
   hp: 200
   hasDeadArea: 0
   hasBlast: 1
-  modelName: enm_02.prefab
+  modelName: enm_boss_01.prefab
   aiName: enemy_5
+  bullet: []

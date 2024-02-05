@@ -4,40 +4,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Osakana4242.SystemExt;
 using Osakana4242.UnityEngineExt;
+using System.ComponentModel;
 
 namespace Osakana4242.Content.Inners {
-	public sealed class AIName {
-		Dictionary<HashKey, System.Action<Chara>> updateFuncs_g_ = new Dictionary<HashKey, System.Action<Chara>> {
-			{ "effect".ToHashKey_Ext(), CharaAIs.Effect.Update },
-			{ "enemy_test_rotation".ToHashKey_Ext(), CharaAIs.EnemyTestRoation.Update },
-			{ "enemy_1".ToHashKey_Ext(), CharaAIs.Enemy1.Update },
-			{ "enemy_2".ToHashKey_Ext(), CharaAIs.Enemy2.Update },
-			{ "enemy_3".ToHashKey_Ext(), CharaAIs.Enemy3.Update },
-			{ "enemy_4".ToHashKey_Ext(), CharaAIs.Enemy4.Update },
-			{ "enemy_5".ToHashKey_Ext(), CharaAIs.Enemy5.Update },
-		};
-		static readonly System.Action<Chara> emptyFunc_g_ = (_) => { };
-		public static readonly AIName Empty = new AIName();
-
-		public readonly string name = "";
-		public readonly System.Action<Chara> updateFunc = emptyFunc_g_;
-
-		AIName() {
-		}
-		public AIName(string name) {
-			if (string.IsNullOrEmpty(name))
-				return;
-			this.name = name;
-			if (!updateFuncs_g_.TryGetValue(name.ToHashKey_Ext(), out var func)) throw new System.ArgumentException($"not found. {name}");
-			this.updateFunc = func;
-		}
-
-		public bool IsEmpty() => string.IsNullOrEmpty(name);
-	}
 
 	[System.Serializable]
 	public class CharaParam {
-
 
 		public int id;
 		public CharaType charaType;

@@ -6,18 +6,20 @@ using Osakana4242.UnityEngineExt;
 using Osakana4242.UnityEngineUtil;
 
 namespace Osakana4242.Content.Inners.CharaAIs {
-	public class EnemyTestRoation {
+	public class EnemyTestRoation : ICharaComponent {
+		public static readonly EnemyTestRoation instance_g = new EnemyTestRoation();
+		
 		/// 一定時間追尾
-		public static void Update(Chara self) {
-			TimeEventData evtData;
+		public void Update(Chara self) {
+			TimeEvent evtData;
 			var preTime = self.data.stateTime;
 			self.data.stateTime += Stage.Current.time.dt;
 
-			if (CharaAI.IsEnterTime(0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(0f, preTime, self.data.stateTime)) {
 				self.data.velocity = self.data.rotation * Vector3.forward * 40f;
 			}
 
-			if (TimeEventData.TryGetEvent(0.5f, 3f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(0.5f, 3f, preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;
@@ -30,7 +32,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 				}
 			}
 
-			if (TimeEventData.TryGetEvent(0.5f, 999f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(0.5f, 999f, preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						break;

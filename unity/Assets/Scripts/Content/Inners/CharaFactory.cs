@@ -15,7 +15,11 @@ namespace Osakana4242.Content.Inners {
 			chara.data.id = charaId;
 			chara.data.rotation = Quaternion.LookRotation(Vector3.right);
 			chara.data.charaType = CharaType.Effect;
-			chara.data.aiName = new AIName("effect");
+
+			if (!chara.data.aiName.IsEmpty()) {
+				var component = chara.data.aiName.createFunc( chara );
+				chara.AddComponent(component);
+			}
 
 			go.transform.position = new Vector3(0f, 0f, 0f);
 			//					player.transform.rotation = Quaternion.LookRotation(Vector3.right);
@@ -40,7 +44,9 @@ namespace Osakana4242.Content.Inners {
 			chara.data.SetInfo(info);
 
 
-			var player = go.AddComponent<Player>();
+			var player = new Player(chara);
+			chara.AddPlayer(player);
+
 			go.transform.position = new Vector3(0f, 0f, 0f);
 			//					player.transform.rotation = Quaternion.LookRotation(Vector3.right);
 			var rb = go.AddComponent<Rigidbody>();
@@ -66,6 +72,10 @@ namespace Osakana4242.Content.Inners {
 			rb.useGravity = false;
 
 			chara.AttachModelTo(prefab);
+
+			var bullet = new CharaAIs.Bullet();
+			bullet.speed = info.bullet[ 0 ].speed;
+			chara.AddComponent(bullet);
 
 			return chara;
 		}
@@ -99,6 +109,12 @@ namespace Osakana4242.Content.Inners {
 				0f);
 			//					enemy.transform.rotation = Quaternion.LookRotation(Vector3.left);
 			go.transform.localScale = new Vector3(-1f, 1f, 1f);
+			
+			if (!chara.data.aiName.IsEmpty()) {
+				var component = chara.data.aiName.createFunc( chara );
+				chara.AddComponent(component);
+			}
+
 			return chara;
 		}
 

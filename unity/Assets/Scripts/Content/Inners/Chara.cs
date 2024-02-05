@@ -6,8 +6,26 @@ using Osakana4242.UnityEngineExt;
 using Osakana4242.Lib.AssetServices;
 
 namespace Osakana4242.Content.Inners {
+	public interface ICharaComponent {
+		void Update(Chara chara);
+	}
+
 	public class Chara : MonoBehaviour {
 		public CharaParam data = new CharaParam();
+		readonly List<ICharaComponent> actionList_ = new List<ICharaComponent>();
+		Player player_;
+		public Player Player => player_;
+		public CharaAIs.Bullet Bullet => (CharaAIs.Bullet)actionList_[ 0 ];
+
+		public void AddPlayer(Player player) {
+			player_ = player;
+			AddComponent(player);
+		}
+
+		public void AddComponent(ICharaComponent comp) {
+			actionList_.Add(comp);
+		}
+
 
 		void OnTriggerEnter(Collider col) {
 			Debug.Log("self: " + name + ", col: " + col);
@@ -36,11 +54,13 @@ namespace Osakana4242.Content.Inners {
 		public void ManualUpdate() {
 			data.position = transform.position;
 			if (data.spawnedTime <= 0f) {
-				data.spawnedTime = Stage.Current.time.time;
+				data.spawnedTime = Stage.Current.time.time - Stage.Current.time.dt;
 				data.spawnedPosition = data.position;
 			}
 
-			data.aiName.updateFunc(this);
+			foreach (var item in actionList_) {
+				item.Update(this);
+			}
 
 			// 移動.
 			var delta = data.velocity * Stage.Current.time.dt;

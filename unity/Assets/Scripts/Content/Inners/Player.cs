@@ -8,11 +8,8 @@ using Osakana4242.Lib.AssetServices;
 using Cysharp.Text;
 
 namespace Osakana4242.Content.Inners {
-	public class Player : MonoBehaviour {
-		void Start() {
-
-		}
-
+	public class Player : ICharaComponent {
+		Chara chara_;
 		Vector2 pressPos_;
 		Vector2 pointerPrePos_;
 		Vector3 anchorPos_;
@@ -24,6 +21,10 @@ namespace Osakana4242.Content.Inners {
 		ChargeWeapon chargeWeapon_ = new ChargeWeapon();
 
 		List<InputItem> inputHistory_ = new List<InputItem>();
+
+		public Player(Chara chara) {
+			chara_ = chara;
+		}
 
 		/// <summary>レバガチャ判定</summary>
 		static bool CheckShotInput(List<InputItem> history) {
@@ -96,7 +97,7 @@ namespace Osakana4242.Content.Inners {
 
 			{
 				var otherBounds = InnerMain.Instance.playerMovableArea.bounds;
-				var ownCollider = GetComponentInChildren<Collider>();
+				var ownCollider = chara_.gameObject.GetComponentInChildren<Collider>();
 				var ownBounds = ownCollider.bounds;
 				ownBounds.center += chara.data.position - cpos0_;
 
@@ -125,12 +126,12 @@ namespace Osakana4242.Content.Inners {
 			hasCharge_ = pressed_;
 		}
 
-		public void ManualUpdate(Chara chara) {
+		public void Update(Chara chara) {
 			cpos0_ = chara.data.position;
 			weapon_.UpdateShot(chara);
 			chargeWeapon_.UpdateShot(chara, hasCharge_);
 			UpdateMove(chara);
-			transform.position = chara.data.position;
+			chara.transform.position = chara.data.position;
 		}
 
 		public void Report() {
@@ -148,9 +149,8 @@ namespace Osakana4242.Content.Inners {
 					shotTime = 0f;
 					var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.BLT_1_ASSET);
 					var blt = CharaFactory.CreateBullet(info);
+					blt.data.rotation = chara.data.rotation;
 					blt.data.position = chara.data.position + chara.data.rotation * new Vector3(0f, Random.Range(-2f, 2f), 16f);
-					blt.data.velocity = new Vector3(CharaFactory.SpeedByScreen(2f), 0f, 0f);
-
 					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
 			}
@@ -192,7 +192,7 @@ namespace Osakana4242.Content.Inners {
 					var blt = CharaFactory.CreateBullet(info);
 					blt.data.rotation = chara.data.rotation * Quaternion.AngleAxis(bullet.angle, new Vector3(1, 0, 0));
 					blt.data.position = chara.data.position + blt.data.rotation * new Vector3(0f, Random.Range(-2f, 2f), 16f);
-					blt.data.velocity = blt.data.rotation * Vector3.forward * bullet.speed;
+					blt.Bullet.speed = bullet.speed;
 					InnerMain.Instance.stage.charaBank.Add(blt);
 				}
 			}

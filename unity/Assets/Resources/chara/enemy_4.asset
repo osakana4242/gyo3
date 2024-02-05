@@ -17,5 +17,6 @@ MonoBehaviour:
   hp: 1
   hasDeadArea: 1
   hasBlast: 1
-  modelName: enm_01.prefab
+  modelName: ply_01.prefab
   aiName: enemy_4
+  bullet: []

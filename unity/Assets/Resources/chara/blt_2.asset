@@ -19,3 +19,5 @@ MonoBehaviour:
   hasBlast: 1
   modelName: blt_02.prefab
   aiName: 
+  bullet:
+  - speed: 60
