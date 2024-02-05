@@ -37,6 +37,7 @@ namespace Osakana4242.Content {
 		public static readonly AssetInfo TITLE_TOUCH_TO_START_PREFAB = Add(new ("Assets/Resources/title/title_touch_to_start.prefab", typeof(UnityEngine.GameObject)));
 		public static readonly AssetInfo TITLE_TOUCH_TO_START_HIDDEN_ANIM = Add(new ("Assets/Resources/title/title_touch_to_start_hidden.anim", typeof(UnityEngine.AnimationClip)));
 		public static readonly AssetInfo TITLE_TOUCH_TO_START_IDLE_ANIM = Add(new ("Assets/Resources/title/title_touch_to_start_idle.anim", typeof(UnityEngine.AnimationClip)));
+		public static readonly AssetInfo WAVE_01_ASSET = Add(new ("Assets/Resources/wave/wave_01.asset", typeof(Osakana4242.Content.Inners.WaveData)));
 
 
 	}

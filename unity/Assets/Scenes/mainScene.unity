@@ -1064,14 +1064,16 @@ MonoBehaviour:
     stage:
       wave:
         startTime: 0
-        data: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
-        debugStartTime: 0.1
+        data: {fileID: 0}
+        debugStartTime: 0
         debugLoopDuration: 95
         testEnemyIndex: 0
       time:
         time: 0
         dt: 0
+      isEndIfDestroyedBoss_: 0
     hasExitRequest: 0
+    hasStageClearRequest: 0
 --- !u!1 &1410016640
 GameObject:
   m_ObjectHideFlags: 0

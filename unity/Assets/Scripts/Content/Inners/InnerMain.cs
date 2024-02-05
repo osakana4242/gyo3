@@ -35,6 +35,7 @@ namespace Osakana4242.Content.Inners {
 		public Stage stage = new Stage();
 		public PlayerInfo playerInfo = new PlayerInfo();
 		public bool hasExitRequest;
+		public bool hasStageClearRequest;
 		readonly StateMachine sm_;
 
 		public static InnerMain Instance => instance_;
@@ -135,6 +136,7 @@ namespace Osakana4242.Content.Inners {
 				Enter = () => {
 					if (stage.IsLoading()) throw new System.Exception("stage が末ロード");
 					hasExitRequest = false;
+					hasStageClearRequest = false;
 					playerInfo.stock = new PlayerStock(1);
 					if (stage.IsLoading()) throw new System.Exception("stage が末ロード");
 				},
@@ -145,16 +147,30 @@ namespace Osakana4242.Content.Inners {
 						sm_.Transition(StateId.Title);
 						return;
 					}
-					if (!playerInfo.stock.IsEmpty())
+					if (NeedsGameover()) {
+						sm_.Transition(StateId.Gameover);
 						return;
-					if (stage.ExistsPlayer())
+					}
+					if (NeedsGameclear()) {
+						sm_.Transition(StateId.Title);
 						return;
-
-					sm_.Transition(StateId.Gameover);
+					}
 				},
 				Exit = () => {
 				},
 			};
+
+			bool NeedsGameclear() {
+				return hasStageClearRequest;
+			}
+
+			bool NeedsGameover() {
+				if (!playerInfo.stock.IsEmpty())
+					return false;
+				if (stage.ExistsPlayer())
+					return false;
+				return true;
+			}
 		}
 
 		StateBase CreateGameoverState() {

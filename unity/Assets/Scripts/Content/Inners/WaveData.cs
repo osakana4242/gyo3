@@ -13,7 +13,7 @@ using UnityEditor;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class WaveData : ScriptableObject {
-		public WaveEventData[] eventList;
+		public WaveEventData[] eventList = System.Array.Empty<WaveEventData>();
 
 #if UNITY_EDITOR
 		[CustomPropertyDrawer(typeof(WaveEventData))]
@@ -89,6 +89,9 @@ namespace Osakana4242.Content.Inners {
 								if (!isLayout) EditorGUI.EndDisabledGroup();
 								position.y += LineHeight;
 							}
+						} else if (type == WaveEventType.EndIfDestroyedEnemy) {
+							PropertyField(ref position, isLayout, spStartTime);
+							PropertyField(ref position, isLayout, spEnemyName);
 						}
 					}
 				}
