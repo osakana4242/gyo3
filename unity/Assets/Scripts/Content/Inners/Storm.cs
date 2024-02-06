@@ -8,13 +8,14 @@ using Osakana4242.UnityEngineUtil;
 using System.Threading;
 using Osakana4242.Lib.AssetServices;
 using Cysharp.Threading.Tasks;
+using System;
 namespace Osakana4242.Content.Inners {
 
 
 	[System.Serializable]
-	public class Wave {
+	public class Storm {
 		public float startTime;
-		public WaveData data = WaveData.Empty;
+		public StormData data;
 
 		public float debugStartTime;
 		public float debugLoopDuration;
@@ -23,12 +24,27 @@ namespace Osakana4242.Content.Inners {
 		List<CharaInfo> charaInfos_ = new List<CharaInfo>();
 		List<GameObject> models_ = new List<GameObject>();
 
+		Storm child_;
+		int readedIndex_;
+		float rowTime_;
+		Wave wave_ = new Wave();
+
 		public void Init() {
 			startTime = Stage.Current.time.time;
+			wave_.Init();
 		}
 
 		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
-			var charaInfoTasks = data.eventList.
+
+			List<StormEventData> eventList = new();
+
+			data.ForEachEvent(new HashSet<StormData>(), eventList, (_evt, _eventList) => {
+				_eventList.Add(_evt);
+			});
+
+			var charaInfoTasks = eventList.
+				Where(_evt => _evt.type == StormEventType.SpawnWave).
+				SelectMany(_evt => _evt.GetSpawnWave().wave.eventList).
 				Where(row => row.type == WaveEventType.Spawn).
 				Select(row => row.GetEnemyCharaInfoAssetInfo()).
 				Union(new AssetInfo[] {
@@ -55,6 +71,8 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Update() {
+			child_?.Update();
+
 			if (testEnemy.enabled) {
 				UpdateTestEnemy();
 				return;
@@ -72,28 +90,54 @@ namespace Osakana4242.Content.Inners {
 
 			var preTime = Stage.Current.time.preTime;
 			var time = Stage.Current.time.time;
+			rowTime_ += Stage.Current.time.dt;
+			Hoge();
+			wave_.Update();
+			UpdateEndIfDestroyedBoss();
+		}
 
-			for (int i = 0, iCount = data.eventList.Length; i < iCount; ++i) {
+		void Hoge() {
+			for (int i = readedIndex_, iCount = data.eventList.Length; i < iCount; ++i) {
 				var row = data.eventList[i];
-				if (row.type == WaveEventType.None)
-					continue;
-				var eventStartTime = startTime + (row.startTime / 1000f);
-				if (!TimeEvent.IsEnter(eventStartTime, preTime, time))
-					continue;
+
 				switch (row.type) {
-					case WaveEventType.Spawn:
-						Spawn(row); break;
-					case WaveEventType.EndIfDestroyedEnemy:
-						EndIfDestroyedEnemy(row);
+					case StormEventType.None:
+						break;
+					case StormEventType.Delay:
+						if (rowTime_ < row.GetDelay().delay) {
+							return;
+						}
+						break;
+					case StormEventType.SpawnWave:
+						var w = row.GetSpawnWave();
+						TimeEvent.TryGetEvent(0, 999, rowTime_ - Stage.Current.time.dt, rowTime_);
+						wave_.Init();
+						wave_.data = w.wave;
+						break;
+					case StormEventType.SetStorm:
+						var s = row.GetSetStorm();
+						if ( s.railIndex <= 0 ) {
+							this.data = s.storm;
+							// 打ち切り.
+							return;
+						} else {
+							if ( null ==  child_) {
+								child_ = new Storm();
+							}
+							child_.Init();
+							child_.data = s.storm;
+						}
 						break;
 				}
+
+				rowTime_ = 0f;
+				readedIndex_ = i;
 			}
-			UpdateEndIfDestroyedBoss();
 		}
 
 		void UpdateEndIfDestroyedBoss() {
 			if (!Stage.Current.isEndIfDestroyedBoss_) return;
-			if (Stage.Current.charaBank.TryGetEnemy( out var _ ) ) return;
+			if (Stage.Current.charaBank.TryGetEnemy(out var _)) return;
 			InnerMain.Instance.hasStageClearRequest = true;
 		}
 

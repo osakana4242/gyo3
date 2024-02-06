@@ -6,6 +6,8 @@ using Osakana4242.UnityEngineUtil;
 using Osakana4242.SystemExt;
 using Osakana4242.Lib;
 using System.Linq;
+using Osakana4242.Lib.AssetServices;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -13,6 +15,11 @@ using UnityEditor;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class WaveData : ScriptableObject {
+		static WaveData empty_g_;
+		public static WaveData Empty => (null == empty_g_) ?
+			empty_g_ :
+			(empty_g_ = WaveData.CreateInstance<WaveData>());
+
 		public WaveEventData[] eventList = System.Array.Empty<WaveEventData>();
 
 #if UNITY_EDITOR
@@ -178,5 +185,27 @@ namespace Osakana4242.Content.Inners {
 			}
 		}
 #endif
+	}
+
+	public enum WaveEventType {
+		None = 0,
+		Spawn = 1,
+		EndIfDestroyedEnemy = 2,
+	}
+
+	[System.Serializable]
+	public class WaveEventData {
+		public WaveEventType type;
+		public float startTime;
+		public string comment;
+		public string enemyName;
+		public float positionX;
+		public float positionY;
+		// 0: 右, 90 下, 180: 左, 270: 上
+		public float angle;
+
+		public Vector2 Position => new Vector2(positionX, positionY);
+		public AssetInfo GetEnemyCharaInfoAssetInfo() => AssetInfos.Get($"{enemyName}.asset");
+		public CharaInfo GetEnemyCharaInfo() => AssetService.Instance.Get<CharaInfo>(GetEnemyCharaInfoAssetInfo());
 	}
 }

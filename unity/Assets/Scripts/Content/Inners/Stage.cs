@@ -28,7 +28,9 @@ namespace Osakana4242.Content.Inners {
 		};
 
 		bool loading_;
+
 		public Wave wave;
+		public Storm storm;
 
 		public CharaBank charaBank = new CharaBank();
 		public StageTime time = new StageTime();
