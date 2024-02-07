@@ -1062,18 +1062,7 @@ MonoBehaviour:
     screenArea: {fileID: 1469556375}
     playerMovableArea: {fileID: 1989136083}
     stage:
-      wave:
-        startTime: 0
-        data: {fileID: 0}
-        debugStartTime: 0
-        debugLoopDuration: 95
-        testEnemyIndex: 0
-      storm:
-        startTime: 0
-        data: {fileID: 11400000, guid: a0bbe79e0938b9d49b4b4943fb715965, type: 2}
-        debugStartTime: 0
-        debugLoopDuration: 0
-        testEnemyIndex: 0
+      stormList_: []
       time:
         time: 0
         dt: 0

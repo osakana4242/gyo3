@@ -17,8 +17,8 @@ namespace Osakana4242.Content.Inners {
 	public class WaveData : ScriptableObject {
 		static WaveData empty_g_;
 		public static WaveData Empty => (null == empty_g_) ?
-			empty_g_ :
-			(empty_g_ = WaveData.CreateInstance<WaveData>());
+			(empty_g_ = WaveData.CreateInstance<WaveData>()) :
+			empty_g_;
 
 		public WaveEventData[] eventList = System.Array.Empty<WaveEventData>();
 

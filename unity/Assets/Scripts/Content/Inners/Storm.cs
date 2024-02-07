@@ -12,26 +12,40 @@ using System;
 namespace Osakana4242.Content.Inners {
 
 
-	[System.Serializable]
+	[Serializable]
 	public class Storm {
+		public int railIndex;
 		public float startTime;
 		public StormData data;
+		int readedIndex_;
+		float rowTime_;
 
 		public float debugStartTime;
 		public float debugLoopDuration;
-		public Config.TestEnemyWave testEnemy => Config.instance.testEnemy;
+		public Config.TestEnemyWave TestEnemy => Config.instance.testEnemy;
 		public int testEnemyIndex;
 		List<CharaInfo> charaInfos_ = new List<CharaInfo>();
 		List<GameObject> models_ = new List<GameObject>();
 
-		Storm child_;
-		int readedIndex_;
-		float rowTime_;
-		Wave wave_ = new Wave();
+		[SerializeField] Wave wave_ = new Wave();
+
+		public Storm(int id) {
+			this.railIndex = id;
+			data = StormData.Empty;
+		}
 
 		public void Init() {
+			Clear();
 			startTime = Stage.Current.time.time;
 			wave_.Init();
+			Debug.Log( $"Storm, railIndex: {railIndex} Init" );
+		}
+
+		public void Clear() {
+			wave_.Clear();
+			startTime = 0;
+			rowTime_ = 0;
+			readedIndex_ = 0;
 		}
 
 		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
@@ -48,7 +62,7 @@ namespace Osakana4242.Content.Inners {
 				Where(row => row.type == WaveEventType.Spawn).
 				Select(row => row.GetEnemyCharaInfoAssetInfo()).
 				Union(new AssetInfo[] {
-					AssetInfos.Get($"{testEnemy.enemyName}.asset")
+					AssetInfos.Get($"{TestEnemy.enemyName}.asset")
 				}).
 				Distinct().
 				Select(row => AssetService.Instance.GetAsync<CharaInfo>(row, cancellationToken)).
@@ -71,9 +85,7 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Update() {
-			child_?.Update();
-
-			if (testEnemy.enabled) {
+			if (TestEnemy.enabled) {
 				UpdateTestEnemy();
 				return;
 			}
@@ -91,47 +103,55 @@ namespace Osakana4242.Content.Inners {
 			var preTime = Stage.Current.time.preTime;
 			var time = Stage.Current.time.time;
 			rowTime_ += Stage.Current.time.dt;
-			Hoge();
-			wave_.Update();
+			UpdateEvents();
 			UpdateEndIfDestroyedBoss();
 		}
 
-		void Hoge() {
-			for (int i = readedIndex_, iCount = data.eventList.Length; i < iCount; ++i) {
-				var row = data.eventList[i];
+		void UpdateEvents() {
+			var dt = Stage.Current.time.dt;
+			for (var iCount = data.eventList.Length; readedIndex_ < iCount; ++readedIndex_) {
+				var row = data.eventList[readedIndex_];
 
 				switch (row.type) {
 					case StormEventType.None:
 						break;
 					case StormEventType.Delay:
-						if (rowTime_ < row.GetDelay().delay) {
+						if (rowTime_ < row.GetDelay().delay)
 							return;
-						}
 						break;
 					case StormEventType.SpawnWave:
-						var w = row.GetSpawnWave();
-						TimeEvent.TryGetEvent(0, 999, rowTime_ - Stage.Current.time.dt, rowTime_);
-						wave_.Init();
-						wave_.data = w.wave;
+						if (!TimeEvent.TryGetEvent(0, float.MaxValue, rowTime_ - dt, rowTime_, out var timeEvent))
+							return;
+						
+						switch (timeEvent.type) {
+							case TimeEventType.Enter:
+								var w = row.GetSpawnWave();
+								wave_.Init();
+								wave_.data = w.wave;
+								break;
+							case TimeEventType.Loop:
+								break;
+						}
+						wave_.Update();
+						if (wave_.IsPlaying())
+							return;
 						break;
 					case StormEventType.SetStorm:
 						var s = row.GetSetStorm();
-						if ( s.railIndex <= 0 ) {
+						if ( s.railIndex == this.railIndex ) {
+							Init();
 							this.data = s.storm;
 							// 打ち切り.
 							return;
 						} else {
-							if ( null ==  child_) {
-								child_ = new Storm();
-							}
-							child_.Init();
-							child_.data = s.storm;
+							var otherStorm = Stage.Current.stormList_[ s.railIndex ];
+							otherStorm.Init();
+							otherStorm.data = s.storm;
 						}
 						break;
 				}
-
+				Debug.Log( $"Storm {railIndex}, event: {readedIndex_}, type: {row.type}" );
 				rowTime_ = 0f;
-				readedIndex_ = i;
 			}
 		}
 
@@ -141,30 +161,18 @@ namespace Osakana4242.Content.Inners {
 			InnerMain.Instance.hasStageClearRequest = true;
 		}
 
-		void Spawn(WaveEventData row) {
-			var pos = row.Position * 16f;
-			var charaInfo = row.GetEnemyCharaInfo();
-			var enemy = CharaFactory.CreateEnemy(charaInfo);
-			enemy.data.position = pos;
-			var vec = Vector2Util.FromDeg(row.angle);
-			enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
-			enemy.data.velocity = Vector3.zero;
-
-			InnerMain.Instance.stage.charaBank.Add(enemy);
-		}
-
 		void EndIfDestroyedEnemy(WaveEventData row) {
 			Stage.Current.isEndIfDestroyedBoss_ = true;
 		}
 
 		public void UpdateTestEnemy() {
 			if (!Stage.Current.charaBank.TryGetEnemy(out var enemy)) {
-				var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.Get($"{testEnemy.enemyName}.asset"));
+				var info = AssetService.Instance.Get<CharaInfo>(AssetInfos.Get($"{TestEnemy.enemyName}.asset"));
 				enemy = CharaFactory.CreateEnemy(info);
-				enemy.data.position = testEnemy.positionList[testEnemyIndex];
+				enemy.data.position = TestEnemy.positionList[testEnemyIndex];
 				enemy.data.rotation = Quaternion.LookRotation(new Vector2(-1f, 0f));
 				InnerMain.Instance.stage.charaBank.Add(enemy);
-				testEnemyIndex = (testEnemyIndex + 1) % testEnemy.positionList.Length; ;
+				testEnemyIndex = (testEnemyIndex + 1) % TestEnemy.positionList.Length; ;
 			}
 		}
 	}

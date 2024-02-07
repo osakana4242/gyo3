@@ -14,14 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventList:
   - type: 4
-    i0: 1000
+    i0: 500
     s0: 
     so0: {fileID: 0}
   - type: 1
     i0: 0
     s0: 
     so0: {fileID: 11400000, guid: 05fe6162e13cce04cb50adcee2665753, type: 2}
-  - type: 5
+  - type: 1
     i0: 0
+    s0: 
+    so0: {fileID: 11400000, guid: 50db1a13ee8b1e7459536fdb3153a047, type: 2}
+  - type: 5
+    i0: 1
     s0: 
     so0: {fileID: 11400000}

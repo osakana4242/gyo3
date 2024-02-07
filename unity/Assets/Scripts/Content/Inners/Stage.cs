@@ -24,13 +24,12 @@ namespace Osakana4242.Content.Inners {
 			AssetInfos.EFT_BLAST_01_PREFAB,
 			AssetInfos.EFT_BLAST_01_PREFAB,
 
-			AssetInfos.WAVE_01_ASSET,
+			AssetInfos.STORM_R_01_01_ASSET,
 		};
 
 		bool loading_;
 
-		public Wave wave;
-		public Storm storm;
+		public List<Storm> stormList_ = new List<Storm>();
 
 		public CharaBank charaBank = new CharaBank();
 		public StageTime time = new StageTime();
@@ -41,12 +40,14 @@ namespace Osakana4242.Content.Inners {
 		public bool isEndIfDestroyedBoss_;
 
 		public Stage() {
-			wave = new Wave();
-
 		}
 		public void Init() {
 			Clear();
-			wave.Init();
+			for (var i = 0; i < 2; ++i) {
+				var storm = new Storm(i);
+				storm.Init();
+				stormList_.Add(storm);
+			}
 			if (!loading_) {
 				LoadAssetAsync(cancellationTokenSource.Token).Forget();
 			}
@@ -63,6 +64,7 @@ namespace Osakana4242.Content.Inners {
 			time.Clear();
 			charaBank.ForEach(this, (_chara, _) => _chara.data.removeRequested = true);
 			charaBank.RemoveAll(this, (_item, _) => _item.data.removeRequested);
+			stormList_.Clear();
 		}
 
 		public bool IsLoading() => loading_;
@@ -77,9 +79,9 @@ namespace Osakana4242.Content.Inners {
 					Select(info => AssetService.Instance.GetAsync<Object>(info, cancellationToken)).
 					ForEach_Ext();
 				await tasks;
-				wave.data = AssetService.Instance.Get<WaveData>(AssetInfos.WAVE_01_ASSET);
+				stormList_[0].data = AssetService.Instance.Get<StormData>(AssetInfos.STORM_R_01_01_ASSET);
 
-				var waveTask = wave.LoadAssetAsync(cancellationToken);
+				var waveTask = stormList_[0].LoadAssetAsync(cancellationToken);
 
 				foreach (var task in tasks) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -111,7 +113,7 @@ namespace Osakana4242.Content.Inners {
 			if (loading_) return;
 			time.Update(UnityEngine.Time.deltaTime);
 			charaBank.Update();
-			wave.Update();
+			stormList_.ForEach(_storm => _storm.Update());
 
 			if (charaBank.TryGetPlayer(out var chara)) {
 				chara.Player.Report();

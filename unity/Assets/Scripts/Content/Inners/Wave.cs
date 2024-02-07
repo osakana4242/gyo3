@@ -14,86 +14,87 @@ namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Wave {
 		public float startTime;
-		public WaveData data = WaveData.Empty;
+		public WaveData data;
 
 		public float debugStartTime;
 		public float debugLoopDuration;
 		public Config.TestEnemyWave testEnemy => Config.instance.testEnemy;
 		public int testEnemyIndex;
-		List<CharaInfo> charaInfos_ = new List<CharaInfo>();
-		List<GameObject> models_ = new List<GameObject>();
+		int eventIndex_;
+		HashSet<int> enemyIds = new HashSet<int>();
+		bool isEnd_ = false;
 
 		public void Init() {
+			Clear();
 			startTime = Stage.Current.time.time;
 		}
 
-		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
-			var charaInfoTasks = data.eventList.
-				Where(row => row.type == WaveEventType.Spawn).
-				Select(row => row.GetEnemyCharaInfoAssetInfo()).
-				Union(new AssetInfo[] {
-					AssetInfos.Get($"{testEnemy.enemyName}.asset")
-				}).
-				Distinct().
-				Select(row => AssetService.Instance.GetAsync<CharaInfo>(row, cancellationToken)).
-				ForEach_Ext();
-
-			foreach (var charaInfoTask in charaInfoTasks) {
-				cancellationToken.ThrowIfCancellationRequested();
-				charaInfos_.Add(await charaInfoTask);
-			}
-
-			var modelTasks = charaInfos_.
-				Select(charaInfo => AssetService.Instance.GetAsync<GameObject>(AssetInfos.Get(charaInfo.modelName), cancellationToken)).
-				ForEach_Ext();
-
-			foreach (var modelTask in modelTasks) {
-				models_.Add(await modelTask);
-			}
-
-
+		public void Clear() {
+			data = WaveData.Empty;
+			startTime = 0;
+			eventIndex_ = 0;
+			isEnd_ = false;
+			enemyIds.Clear();
 		}
 
+		public bool IsPlaying() => !isEnd_;
+		bool IsEndEvents() => data.eventList.Length <= eventIndex_;
+
 		public void Update() {
+			if (isEnd_)
+				return;
+
 			if (testEnemy.enabled) {
 				UpdateTestEnemy();
 				return;
 			}
-			if (0 < debugStartTime) {
-				if (Stage.Current.time.time < debugStartTime) {
-					Stage.Current.time.time = debugStartTime;
-				}
-				var debugEndTime = debugStartTime + debugLoopDuration;
 
-				if (debugEndTime < Stage.Current.time.time) {
-					Stage.Current.time.time = debugStartTime;
-				}
+			UpdateEvents();
+
+			if (!IsEndEvents())
+				return;
+
+			isEnd_ = CountActive() <= 0;
+			if (isEnd_)
+				Debug.Log($"wave is end: {isEnd_}");
+		}
+
+		int CountActive() {
+			var activeCount = 0;
+			foreach (var enemyId in enemyIds) {
+				if (!Stage.Current.charaBank.dict.TryGetValue(enemyId, out var _)) continue;
+				++activeCount;
 			}
+			return activeCount;
+		}
 
+		void UpdateEvents() {
 			var preTime = Stage.Current.time.preTime;
 			var time = Stage.Current.time.time;
+			for (var iCount = data.eventList.Length; eventIndex_ < iCount; ++eventIndex_) {
+				var row = data.eventList[eventIndex_];
 
-			for (int i = 0, iCount = data.eventList.Length; i < iCount; ++i) {
-				var row = data.eventList[i];
 				if (row.type == WaveEventType.None)
 					continue;
+
 				var eventStartTime = startTime + (row.startTime / 1000f);
-				if (!TimeEvent.IsEnter(eventStartTime, preTime, time))
-					continue;
+				var isEnter = TimeEvent.IsEnter(eventStartTime, preTime, time);
+				Debug.Log($"index: {eventIndex_}, eventStartTime: {eventStartTime}, isEnter: {isEnter}");
+
+				if (!isEnter)
+					return;
+
 				switch (row.type) {
 					case WaveEventType.Spawn:
-						Spawn(row); break;
-					case WaveEventType.EndIfDestroyedEnemy:
-						EndIfDestroyedEnemy(row);
+						Spawn(row);
 						break;
 				}
 			}
-			UpdateEndIfDestroyedBoss();
 		}
 
 		void UpdateEndIfDestroyedBoss() {
 			if (!Stage.Current.isEndIfDestroyedBoss_) return;
-			if (Stage.Current.charaBank.TryGetEnemy( out var _ ) ) return;
+			if (Stage.Current.charaBank.TryGetEnemy(out var _)) return;
 			InnerMain.Instance.hasStageClearRequest = true;
 		}
 
@@ -104,7 +105,9 @@ namespace Osakana4242.Content.Inners {
 			enemy.data.position = pos;
 			var vec = Vector2Util.FromDeg(row.angle);
 			enemy.data.rotation = Quaternion.LookRotation((Vector3)vec);
+
 			enemy.data.velocity = Vector3.zero;
+			enemyIds.Add(enemy.data.id);
 
 			InnerMain.Instance.stage.charaBank.Add(enemy);
 		}

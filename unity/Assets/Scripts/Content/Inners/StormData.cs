@@ -12,7 +12,10 @@ using System;
 namespace Osakana4242.Content.Inners {
 
 	public class StormData : ScriptableObject {
-		public StormEventData[] eventList;
+		static StormData empty_g_;
+		public static StormData Empty => (null == empty_g_) ? (empty_g_ = ScriptableObject.CreateInstance<StormData>()) : empty_g_;
+
+		public StormEventData[] eventList = System.Array.Empty<StormEventData>();
 
 		public void ForEachEvent<T>(HashSet<StormData> hashSet, T prm, Action<StormEventData, T> act) {
 			ForEachEvent(this, hashSet, prm, act);
@@ -73,6 +76,7 @@ namespace Osakana4242.Content.Inners {
 
 			public SetStorm(StormEventData data) {
 				storm = (StormData)data.so0;
+				if (null == storm) throw new ArgumentNullException("storm");
 				railIndex = data.i0;
 			}
 		}
@@ -82,6 +86,7 @@ namespace Osakana4242.Content.Inners {
 
 			public SpawnWave(StormEventData data) {
 				wave = (WaveData)data.so0;
+				if (null == wave) throw new ArgumentNullException("wave");
 			}
 		}
 	}
