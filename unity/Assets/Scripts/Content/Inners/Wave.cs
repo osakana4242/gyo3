@@ -23,10 +23,19 @@ namespace Osakana4242.Content.Inners {
 		int eventIndex_;
 		HashSet<int> enemyIds = new HashSet<int>();
 		bool isEnd_ = false;
+		int addingCount_;
+		OnCharaEventDelegate onRemoved_;
 
 		public void Init() {
 			Clear();
 			startTime = Stage.Current.time.time;
+			onRemoved_ = (type) => {
+				if (type != CharaEventType.Removed)
+					return true;
+
+				--addingCount_;
+				return false;
+			};
 		}
 
 		public void Clear() {
@@ -54,18 +63,9 @@ namespace Osakana4242.Content.Inners {
 			if (!IsEndEvents())
 				return;
 
-			isEnd_ = CountActive() <= 0;
+			isEnd_ = addingCount_ <= 0;
 			if (isEnd_)
 				Debug.Log($"wave is end: {isEnd_}");
-		}
-
-		int CountActive() {
-			var activeCount = 0;
-			foreach (var enemyId in enemyIds) {
-				if (!Stage.Current.charaBank.dict.TryGetValue(enemyId, out var _)) continue;
-				++activeCount;
-			}
-			return activeCount;
 		}
 
 		void UpdateEvents() {
@@ -109,7 +109,8 @@ namespace Osakana4242.Content.Inners {
 			enemy.data.velocity = Vector3.zero;
 			enemyIds.Add(enemy.data.id);
 
-			InnerMain.Instance.stage.charaBank.Add(enemy);
+			++addingCount_;
+			InnerMain.Instance.stage.charaBank.Add(enemy, onRemoved_);
 		}
 
 		void EndIfDestroyedEnemy(WaveEventData row) {

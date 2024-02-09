@@ -13,6 +13,29 @@ using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Content.Inners {
 	public static class IEnumrableExt {
+		public static IEnumerable<T> ForEach_Ext<T, T2>(this IEnumerable<T> self, T2 prm, System.Action<T, T2> func) {
+			{
+				if (self is List<T> enumerable) {
+					foreach (var item in enumerable) {
+						func(item, prm);
+					}
+					return self;
+				}
+			}
+			{
+				if (self is HashSet<T> enumerable) {
+					foreach (var item in enumerable) {
+						func(item, prm);
+					}
+					return self;
+				}
+			}
+			for (var e = self.GetEnumerator(); e.MoveNext();) {
+				func(e.Current, prm);
+			}
+			return self;
+		}
+
 		public static IEnumerable<T> ForEach_Ext<T>(this IEnumerable<T> self) {
 			for (var e = self.GetEnumerator(); e.MoveNext();) { }
 			return self;

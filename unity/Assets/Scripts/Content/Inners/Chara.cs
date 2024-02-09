@@ -17,6 +17,10 @@ namespace Osakana4242.Content.Inners {
 		public Player Player => player_;
 		public CharaAIs.Bullet Bullet => (CharaAIs.Bullet)actionList_[ 0 ];
 
+		void OnDestroy() {
+			data.observerList.Clear();
+		}
+
 		public void AddPlayer(Player player) {
 			player_ = player;
 			AddComponent(player);

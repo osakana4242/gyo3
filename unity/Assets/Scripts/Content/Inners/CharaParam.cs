@@ -32,6 +32,17 @@ namespace Osakana4242.Content.Inners {
 		public Vector3[] vector3s = new Vector3[4];
 
 		public int Layer => charaType.GetLayer();
+		public List<OnCharaEventDelegate> observerList = new List<OnCharaEventDelegate>();
+
+		public void FireEvent(CharaEventType type) {
+			for (var i = observerList.Count - 1; 0 <= i; --i) {
+				var item = observerList[i];
+				var isContinuing = item(type);
+				if (isContinuing)
+					continue;
+				observerList.RemoveAt(i);
+			}
+		}
 
 		public void SetInfo(CharaInfo info) {
 			this.charaType = info.charaType;
@@ -52,6 +63,14 @@ namespace Osakana4242.Content.Inners {
 		public void SetLayerTo(GameObject go) {
 			go.transform.ForEachChildWithSelf_Ext(Layer, (_tr, _layer) => _tr.gameObject.layer = _layer);
 		}
+	}
+
+	public delegate bool OnCharaEventDelegate(CharaEventType type);
+
+	public enum CharaEventType {
+		None,
+		Added,
+		Removed,
 	}
 
 	[System.Serializable]

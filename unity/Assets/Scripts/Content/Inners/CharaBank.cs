@@ -1,6 +1,11 @@
 ﻿
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
 
 namespace Osakana4242.Content.Inners {
 
@@ -9,18 +14,23 @@ namespace Osakana4242.Content.Inners {
 		public Dictionary<int, Chara> dict = new Dictionary<int, Chara>();
 		int autoIncrement;
 		List<int> listCache = new List<int>();
-		List<Chara> listAdd = new List<Chara>();
+		List<(Chara, OnCharaEventDelegate)> listAdd = new List<(Chara, OnCharaEventDelegate)>();
 		List<Chara> updateList = new List<Chara>();
-		List<System.Func<Chara>> addFuncList = new List<System.Func<Chara>>();
 		public int CreateId() => ++autoIncrement;
 		int playerId;
-
+		static readonly OnCharaEventDelegate emptyFunc_g = _ => false;
 		public void Add(Chara chara) {
 			chara.gameObject.SetActive(false);
-			listAdd.Add(chara);
+			listAdd.Add((chara, emptyFunc_g));
 		}
 
-		void Add_(Chara chara) {
+		public void Add(Chara chara, OnCharaEventDelegate act) {
+			chara.gameObject.SetActive(false);
+			listAdd.Add((chara, act));
+		}
+
+		void Add_((Chara chara, OnCharaEventDelegate func) param) {
+			var chara = param.chara;
 			dict.Add(chara.data.id, chara);
 			updateList.Add(chara);
 			chara.gameObject.SetActive(true);
@@ -34,6 +44,8 @@ namespace Osakana4242.Content.Inners {
 				InnerMain.Instance.playerInfo.stock = InnerMain.Instance.playerInfo.stock.Spawned();
 				playerId = chara.data.id;
 			}
+			chara.data.observerList.Add(param.func);
+			chara.data.FireEvent(CharaEventType.Added);
 		}
 
 		public void Update() {
@@ -68,8 +80,10 @@ namespace Osakana4242.Content.Inners {
 
 		public void RemoveAll<T>(T prm, System.Func<Chara, T, bool> matcher) {
 			foreach (var kv in dict) {
-				if (!matcher(kv.Value, prm)) continue;
-				GameObject.Destroy(kv.Value.gameObject);
+				var chara = kv.Value;
+				if (!matcher(chara, prm)) continue;
+				chara.data.FireEvent(CharaEventType.Removed);
+				UnityEngine.Object.Destroy(chara.gameObject);
 				listCache.Add(kv.Key);
 			}
 			foreach (var key in listCache) {
