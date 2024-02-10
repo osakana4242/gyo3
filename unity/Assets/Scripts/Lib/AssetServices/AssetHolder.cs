@@ -7,26 +7,31 @@ using Cysharp.Threading.Tasks;
 
 namespace Osakana4242.Lib.AssetServices {
 	public class AssetHolder {
+		static readonly TimeSpan DebugLoadingDuration = TimeSpan.FromMilliseconds(1);
+
 		public readonly AssetInfo info;
-		readonly System.WeakReference assetRef_ = new(null);
+		readonly WeakReference assetRef_ = new(null);
 		UnityEngine.Object asset_;
 		bool loading_;
 		int watcherCount_;
-		System.Exception ex_;
+		Exception ex_;
+		int loadedCount_;
 
 		public AssetHolder(AssetInfo info) {
 			assetRef_.Target = null;
 			this.info = info;
 		}
 
-		bool IsNeedLoadStart() => !assetRef_.IsAlive && !loading_;
+		bool IsNeedLoadStart() =>
+			!assetRef_.IsAlive && !loading_;
+
 		public T GetAsset<T>() {
 			info.ThrowIfCantCast<T>();
 			if (!TryGetAsset<T>(out var asset)) {
 				if (null != ex_) {
-					throw new System.Exception("アセットのロードに失敗している", ex_);
+					throw new Exception("アセットのロードに失敗している", ex_);
 				}
-				throw new System.Exception($"アセットがキャッシュされていない. path: {info.pathFromAssets}");
+				throw new Exception($"アセットがキャッシュされていない. path: {info.pathFromAssets}");
 			}
 			return asset;
 		}
@@ -39,15 +44,18 @@ namespace Osakana4242.Lib.AssetServices {
 			return true;
 		}
 		void SetAsset(UnityEngine.Object asset) {
-			this.asset_ = asset;
-			this.assetRef_.Target = asset;
+			asset_ = asset;
+			assetRef_.Target = asset;
+			++loadedCount_;
+			// if (2 <=loadedCount_)
+			// 	Debug.LogWarning($"SetAssets, name: {info.pathFromAssets}, loadedCount_: {loadedCount_}");
 		}
 		void AddWatcher() {
 			++watcherCount_;
 		}
 
 		void RemoveWatcher() {
-			if (watcherCount_ <= 0) throw new System.Exception($"watcherCount: {watcherCount_}");
+			if (watcherCount_ <= 0) throw new Exception($"watcherCount: {watcherCount_}");
 			--watcherCount_;
 			if (0 < watcherCount_) return;
 			asset_ = null;
@@ -56,11 +64,11 @@ namespace Osakana4242.Lib.AssetServices {
 		static async UniTask<T> GetAsyncCore<T>(AssetInfo info, CancellationToken cancellationToken) where T : UnityEngine.Object {
 			Debug.Log($"{nameof(GetAsyncCore)} - start: {info.pathFromAssets}");
 			info.ThrowIfCantCast<T>();
-			await UniTask.Delay(System.TimeSpan.FromSeconds(1), cancellationToken: cancellationToken);
+			await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellationToken);
 			cancellationToken.ThrowIfCancellationRequested();
 			var asset = await Resources.LoadAsync<T>(info.resourceName.value);
 			if (null == asset) {
-				throw new System.Exception($"リソースが見つからない. name: '{info}'");
+				throw new Exception($"リソースが見つからない. name: '{info}'");
 			}
 			var castedAsset = (T)asset;
 			Debug.Log($"{nameof(GetAsyncCore)} - completed: {info.pathFromAssets}");

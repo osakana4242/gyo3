@@ -63,8 +63,6 @@ namespace Osakana4242.Content.Inners {
 		}
 		public override int GetHashCode() =>
 			value_.GetHashCode();
-		public static explicit operator Msec(float f) =>
-			Msec.FromSeconds(f);
 		/// <summary>秒速をこの時間毎の速度に変換する係数</summary>
 		public float PerSecToPerThis =>
 			(float)value_ / (float)OneSec.value_;

@@ -95,6 +95,9 @@ namespace Osakana4242.Content.Inners {
 				--loading_;
 				Debug.Log($"Stage Load Completed, loading: {loading_}");
 			} catch (OperationCanceledException ex) {
+				await Resources.UnloadUnusedAssets();
+				GC.Collect();
+				GC.Collect();
 				--loading_;
 				Debug.Log($"Stage Load Canceled, loading: {loading_}, ex: {ex}");
 			} catch (Exception ex) {
@@ -115,7 +118,7 @@ namespace Osakana4242.Content.Inners {
 
 		public void Update() {
 			if (IsLoading()) return;
-			time.Update((Msec)Time.deltaTime);
+			time.Update(Msec.FromSeconds(Time.deltaTime));
 			charaBank.Update();
 			stormList_.ForEach(_storm => _storm.Update());
 
