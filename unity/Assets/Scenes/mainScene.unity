@@ -1064,8 +1064,10 @@ MonoBehaviour:
     stage:
       stormList_: []
       time:
-        time: 0
-        dt: 0
+        time:
+          value_: 0
+        dt:
+          value_: 0
       isEndIfDestroyedBoss_: 0
     hasExitRequest: 0
     hasStageClearRequest: 0

@@ -16,7 +16,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			self.data.stateTime += Stage.Current.time.dt;
 
 			// 直進.
-			if (TimeEvent.TryGetEvent(0.0f, 10f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.0f), Msec.FromSeconds(10f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						break;
@@ -27,7 +27,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			}
 
 			// 方向合わせ.
-			if (TimeEvent.TryGetEvent(0.5f, 1f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.5f), Msec.FromSeconds(1f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						break;
@@ -40,7 +40,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			}
 
 			// 射撃.
-			if (TimeEvent.IsEnter(1.2f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(1.2f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPlayer(self, ShotParam.Create());
 			}
 		}

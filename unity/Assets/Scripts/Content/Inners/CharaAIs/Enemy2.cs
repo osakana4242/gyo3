@@ -14,7 +14,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			self.data.stateTime += Stage.Current.time.dt;
 			TimeEvent evtData;
 
-			if (TimeEvent.TryGetEvent(0f, 0.5f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0f), Msec.FromSeconds(0.5f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;
@@ -25,7 +25,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 				}
 			}
 
-			if (TimeEvent.TryGetEvent(0.5f, 9f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.5f), Msec.FromSeconds(9f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;
@@ -36,7 +36,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 				}
 			}
 
-			if (TimeEvent.TryGetEvent(10f, 5f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(10f), Msec.FromSeconds(5f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;
@@ -47,21 +47,21 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 				}
 			}
 
-			if (TimeEvent.TryGetEvent(15f, 0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(15f), Msec.FromSeconds(0f), preTime, self.data.stateTime, out evtData)) {
 				self.data.removeRequested = true;
 			}
 
-			if (TimeEvent.TryGetEvent(2f, 0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(2f), Msec.FromSeconds(0f), preTime, self.data.stateTime, out evtData)) {
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(-30f, 0f, 0f)));
 			}
 
-			if (TimeEvent.TryGetEvent(2.5f, 0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(2.5f), Msec.FromSeconds(0f), preTime, self.data.stateTime, out evtData)) {
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(20f, 0f, 0f)));
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(-20f, 0f, 0f)));
 			}
 
-			if (TimeEvent.TryGetEvent(3f, 0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(3f), Msec.FromSeconds(0f), preTime, self.data.stateTime, out evtData)) {
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(15f, 0f, 0f)));
 				CharaAI.ShotToPlayer(self, ShotParam.Create(Vector3.zero, Quaternion.Euler(-15f, 0f, 0f)));
 			}

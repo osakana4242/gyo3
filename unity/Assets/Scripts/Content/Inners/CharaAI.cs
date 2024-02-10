@@ -37,7 +37,7 @@ namespace Osakana4242.Content.Inners {
 		public static Quaternion LookAtAngle(Chara self, Vector3 position, float maxDelta) {
 			Vector2 vec = self.data.rotation * Vector3.forward;
 			Vector2 toTargetVec = position - self.data.position;
-			var angleSpeed = maxDelta * Stage.Current.time.dt;
+			var angleSpeed = maxDelta * Stage.Current.time.dt.PerSecToPerThis;
 			Vector2 vec2 = Vector2Util.MoveTowardsByAngle(vec, toTargetVec, angleSpeed);
 			return Quaternion.LookRotation(vec2);
 		}
@@ -47,11 +47,11 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		/// <summary>指定距離を通りすぎないようにスピードを抑制する</summary>
-		public static float ClampSpeed(float distance, float speed, float dt) {
-			if (dt <= 0) return speed;
-			var movedDistance = dt * speed;
+		public static float ClampSpeed(float distance, float speed, Msec dt) {
+			if (dt <= Msec.Zero) return speed;
+			var movedDistance = dt.PerSecToPerThis * speed;
 			if (movedDistance <= distance) return speed;
-			var clampedSpeed = distance / dt;
+			var clampedSpeed = distance * dt.PerThisToPerSec;
 			return clampedSpeed;
 		}
 	}

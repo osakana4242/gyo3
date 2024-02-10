@@ -15,14 +15,14 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			var preTime = self.data.stateTime;
 			self.data.stateTime += Stage.Current.time.dt;
 
-			if (TimeEvent.IsEnter(0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(0f), preTime, self.data.stateTime)) {
 				var info = self.GetComponentInChildren<Osakana4242.Content.Inners.Effect>();
 				self.data.duration = info.Duration;
 				var ps = info.GetComponentInChildren<ParticleSystem>();
 				ps.Play(true);
 			}
 
-			if (TimeEvent.TryGetEvent(self.data.duration, 999f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(self.data.duration, preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;

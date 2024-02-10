@@ -23,10 +23,10 @@ namespace Osakana4242.Content.Inners {
 		public string modelName;
 		public int ownerCharaId;
 		public AIName aiName = AIName.Empty;
-		public float spawnedTime;
+		public Msec spawnedTime;
 		public Vector3 spawnedPosition;
-		public float duration = float.MaxValue;
-		public float stateTime = 0f;
+		public Msec duration = Msec.Zero;
+		public Msec stateTime = Msec.Zero;
 		public int state;
 		public bool removeRequested;
 		public Vector3[] vector3s = new Vector3[4];

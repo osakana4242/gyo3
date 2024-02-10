@@ -57,7 +57,7 @@ namespace Osakana4242.Content.Inners {
 
 		public void ManualUpdate() {
 			data.position = transform.position;
-			if (data.spawnedTime <= 0f) {
+			if (data.spawnedTime <= Msec.Zero) {
 				data.spawnedTime = Stage.Current.time.time - Stage.Current.time.dt;
 				data.spawnedPosition = data.position;
 			}
@@ -67,7 +67,7 @@ namespace Osakana4242.Content.Inners {
 			}
 
 			// 移動.
-			var delta = data.velocity * Stage.Current.time.dt;
+			var delta = data.velocity * Stage.Current.time.dt.PerSecToPerThis;
 			data.position += delta;
 
 			if (data.hasDeadArea) {

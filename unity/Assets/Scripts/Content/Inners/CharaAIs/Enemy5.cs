@@ -18,7 +18,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			self.data.stateTime += Stage.Current.time.dt;
 
 			// 直進.
-			if (TimeEvent.TryGetEvent(0.0f, 1.0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.0f), Msec.FromSeconds(1.0f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = Vector3.zero;
@@ -30,7 +30,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			}
 
 			// 上.
-			if (TimeEvent.TryGetEvent(1.0f, 1.0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(1.0f), Msec.FromSeconds(1.0f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = Vector3.zero;
@@ -46,7 +46,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			}
 
 			// 下.
-			if (TimeEvent.TryGetEvent(3.0f, 1.0f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(3.0f), Msec.FromSeconds(1.0f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = Vector3.zero;
@@ -62,52 +62,52 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			}
 
 			// 射撃.
-			if (TimeEvent.IsEnter(2.0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(2.0f), preTime, self.data.stateTime)) {
 				targetPos_ = CharaAI.GetPlayerPosition(self);
 			}
-			if (TimeEvent.IsEnter(2.0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(2.0f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
-			if (TimeEvent.IsEnter(2.2f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(2.2f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
-			if (TimeEvent.IsEnter(2.4f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(2.4f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
 
 			// 射撃.
-			if (TimeEvent.IsEnter(2.0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(2.0f), preTime, self.data.stateTime)) {
 				targetPos_ = CharaAI.GetPlayerPosition(self);
 			}
-			if (TimeEvent.IsEnter(4.0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(4.0f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
-			if (TimeEvent.IsEnter(4.2f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(4.2f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
-			if (TimeEvent.IsEnter(4.4f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(4.4f), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(-30f, 0f, 0f)));
 				CharaAI.ShotToPosition(self, targetPos_, ShotParam.Create(new Vector3(0, 0, 16), Quaternion.Euler(0f, 0f, 0f)));
 			}
 
 			// 巻き戻し.
-			if (TimeEvent.TryGetEvent(5.0f, 999f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(5.0f), Msec.FromSeconds(999f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						break;
 					default:
-						self.data.stateTime = 1.0f;
+						self.data.stateTime = Msec.FromSeconds(1.0f);
 						break;
 				}
 			}

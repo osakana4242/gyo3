@@ -9,6 +9,6 @@ using System.Threading.Tasks;
 namespace Osakana4242.Content.Inners {
 	public class Effect : MonoBehaviour {
 		[SerializeField] float duration_;
-		public float Duration => duration_;
+		public Msec Duration => (Msec)duration_;
 	}
 }

@@ -15,11 +15,11 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			var preTime = self.data.stateTime;
 			self.data.stateTime += Stage.Current.time.dt;
 
-			if (TimeEvent.IsEnter(0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds(0f), preTime, self.data.stateTime)) {
 				self.data.velocity = self.data.rotation * Vector3.forward * 40f;
 			}
 
-			if (TimeEvent.TryGetEvent(0.5f, 3f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.5f), Msec.FromSeconds(3f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						self.data.velocity = self.data.rotation * Vector3.forward * 0f;
@@ -32,7 +32,7 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 				}
 			}
 
-			if (TimeEvent.TryGetEvent(0.5f, 999f, preTime, self.data.stateTime, out evtData)) {
+			if (TimeEvent.TryGetEvent(Msec.FromSeconds(0.5f), Msec.FromSeconds(999f), preTime, self.data.stateTime, out evtData)) {
 				switch (evtData.type) {
 					case TimeEventType.Exit:
 						break;

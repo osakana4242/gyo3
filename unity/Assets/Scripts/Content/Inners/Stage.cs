@@ -8,6 +8,7 @@ using Osakana4242.UnityEngineUtil;
 using System.Threading;
 using Osakana4242.Lib.AssetServices;
 using Cysharp.Threading.Tasks;
+using System;
 namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class Stage {
@@ -27,7 +28,7 @@ namespace Osakana4242.Content.Inners {
 			AssetInfos.STORM_R_01_01_ASSET,
 		};
 
-		bool loading_;
+		int loading_ = 0;
 
 		public List<Storm> stormList_ = new List<Storm>();
 
@@ -35,7 +36,7 @@ namespace Osakana4242.Content.Inners {
 		public StageTime time = new StageTime();
 
 		public static Stage Current => InnerMain.Instance.stage;
-		readonly CancellationTokenSource cancellationTokenSource = new();
+		CancellationTokenSource cancellationTokenSource = new();
 		List<object> assets_ = new List<object>();
 		public bool isEndIfDestroyedBoss_;
 
@@ -48,18 +49,18 @@ namespace Osakana4242.Content.Inners {
 				storm.Init();
 				stormList_.Add(storm);
 			}
-			if (!loading_) {
-				LoadAssetAsync(cancellationTokenSource.Token).Forget();
-			}
+			LoadAssetAsync(cancellationTokenSource.Token).Forget();
 		}
 
 		public void Dispose() {
-			cancellationTokenSource.Cancel();
-			cancellationTokenSource.Dispose();
 			Clear();
 		}
 
 		public void Clear() {
+			Debug.Log("CANCEL by Clear");
+			cancellationTokenSource.Cancel();
+			cancellationTokenSource.Dispose();
+			cancellationTokenSource = new();
 			isEndIfDestroyedBoss_ = false;
 			time.Clear();
 			charaBank.ForEach(this, (_chara, _) => _chara.data.removeRequested = true);
@@ -67,16 +68,18 @@ namespace Osakana4242.Content.Inners {
 			stormList_.Clear();
 		}
 
-		public bool IsLoading() => loading_;
+		public bool IsLoading() => 0 < loading_;
 
 		public async UniTask LoadAssetAsync(CancellationToken cancellationToken) {
-			while (loading_) {
+			++loading_;
+			Debug.Log($"Stage Load Start, loading_: {loading_}");
+			while (2 <= loading_) {
+				Debug.Log($"wait loading_: {loading_}");
 				await UniTask.NextFrame(cancellationToken: cancellationToken);
 			}
-			loading_ = true;
 			try {
 				var tasks = preLoadAssetInfoList_g_.
-					Select(info => AssetService.Instance.GetAsync<Object>(info, cancellationToken)).
+					Select(info => AssetService.Instance.GetAsync<UnityEngine.Object>(info, cancellationToken)).
 					ForEach_Ext();
 				await tasks;
 				stormList_[0].data = AssetService.Instance.Get<StormData>(AssetInfos.STORM_R_01_01_ASSET);
@@ -89,12 +92,13 @@ namespace Osakana4242.Content.Inners {
 				}
 
 				await waveTask;
-				loading_ = false;
-			} catch (TaskCanceledException ex) {
-				Debug.Log($"task canceled: {ex}");
-				throw ex;
-			} catch (System.Exception ex) {
-				Debug.LogError($"ex: {ex}");
+				--loading_;
+				Debug.Log($"Stage Load Completed, loading: {loading_}");
+			} catch (OperationCanceledException ex) {
+				--loading_;
+				Debug.Log($"Stage Load Canceled, loading: {loading_}, ex: {ex}");
+			} catch (Exception ex) {
+				Debug.LogError($"Stage Load Failed, loading: {loading_}, ex: {ex}");
 				throw ex;
 			}
 		}
@@ -110,8 +114,8 @@ namespace Osakana4242.Content.Inners {
 		}
 
 		public void Update() {
-			if (loading_) return;
-			time.Update(UnityEngine.Time.deltaTime);
+			if (IsLoading()) return;
+			time.Update((Msec)Time.deltaTime);
 			charaBank.Update();
 			stormList_.ForEach(_storm => _storm.Update());
 
@@ -123,19 +127,19 @@ namespace Osakana4242.Content.Inners {
 
 	[System.Serializable]
 	public class StageTime {
-		public float time;
-		public float dt;
+		public Msec time;
+		public Msec dt;
 
-		public float preTime => time - dt;
+		public Msec preTime => time - dt;
 
-		public void Update(float dt) {
+		public void Update(Msec dt) {
 			this.dt = dt;
 			this.time += dt;
 		}
 
 		public void Clear() {
-			this.time = 0;
-			this.dt = 0;
+			this.time = Msec.Zero;
+			this.dt = Msec.Zero;
 		}
 	}
 }

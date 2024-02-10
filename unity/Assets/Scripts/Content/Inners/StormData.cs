@@ -64,10 +64,10 @@ namespace Osakana4242.Content.Inners {
 		public SpawnWave GetSpawnWave() => new SpawnWave(this);
 
 		public struct Delay {
-			public float delay;
+			public Msec delay;
 
 			public Delay(StormEventData data) {
-				delay = data.i0 / 1000.0f;
+				delay = Msec.FromMsec(data.i0);
 			}
 		}
 		public struct SetStorm {

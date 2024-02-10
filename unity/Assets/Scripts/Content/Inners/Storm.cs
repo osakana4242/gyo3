@@ -15,13 +15,13 @@ namespace Osakana4242.Content.Inners {
 	[Serializable]
 	public class Storm {
 		public int railIndex;
-		public float startTime;
+		public Msec startTime;
 		public StormData data;
 		int readedIndex_;
-		float rowTime_;
+		Msec rowTime_;
 
-		public float debugStartTime;
-		public float debugLoopDuration;
+		public Msec debugStartTime;
+		public Msec debugLoopDuration;
 		public Config.TestEnemyWave TestEnemy => Config.instance.testEnemy;
 		public int testEnemyIndex;
 		List<CharaInfo> charaInfos_ = new List<CharaInfo>();
@@ -43,8 +43,8 @@ namespace Osakana4242.Content.Inners {
 
 		public void Clear() {
 			wave_.Clear();
-			startTime = 0;
-			rowTime_ = 0;
+			startTime = Msec.Zero;
+			rowTime_ = Msec.Zero;
 			readedIndex_ = 0;
 		}
 
@@ -89,7 +89,7 @@ namespace Osakana4242.Content.Inners {
 				UpdateTestEnemy();
 				return;
 			}
-			if (0 < debugStartTime) {
+			if (Msec.Zero < debugStartTime) {
 				if (Stage.Current.time.time < debugStartTime) {
 					Stage.Current.time.time = debugStartTime;
 				}
@@ -120,7 +120,7 @@ namespace Osakana4242.Content.Inners {
 							return;
 						break;
 					case StormEventType.SpawnWave:
-						if (!TimeEvent.TryGetEvent(0, float.MaxValue, rowTime_ - dt, rowTime_, out var timeEvent))
+						if (!TimeEvent.TryGetEvent(Msec.Zero, rowTime_ - dt, rowTime_, out var timeEvent))
 							return;
 						
 						switch (timeEvent.type) {
@@ -151,7 +151,7 @@ namespace Osakana4242.Content.Inners {
 						break;
 				}
 				Debug.Log( $"Storm {railIndex}, event: {readedIndex_}, type: {row.type}" );
-				rowTime_ = 0f;
+				rowTime_ = Msec.Zero;
 			}
 		}
 

@@ -13,15 +13,15 @@ namespace Osakana4242.Content.Inners.CharaAIs {
 			var preTime = self.data.stateTime;
 			self.data.stateTime += Stage.Current.time.dt;
 
-			if (TimeEvent.IsEnter(0f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds( 0f ), preTime, self.data.stateTime)) {
 				self.data.velocity = self.data.rotation * Vector3.forward * 40f;
 			}
 
-			if (TimeEvent.IsEnter(0.5f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds( 0.5f ), preTime, self.data.stateTime)) {
 				self.data.velocity = self.data.rotation * Vector3.forward * 20f;
 			}
 
-			if (TimeEvent.IsEnter(2f, preTime, self.data.stateTime)) {
+			if (TimeEvent.IsEnter(Msec.FromSeconds( 2.0f ), preTime, self.data.stateTime)) {
 				CharaAI.ShotToPlayer(self, ShotParam.Create());
 			}
 

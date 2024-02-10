@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventList:
   - type: 4
-    i0: 500
+    i0: 0
     s0: 
     so0: {fileID: 0}
   - type: 1

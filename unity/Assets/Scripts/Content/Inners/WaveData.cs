@@ -196,7 +196,7 @@ namespace Osakana4242.Content.Inners {
 	[System.Serializable]
 	public class WaveEventData {
 		public WaveEventType type;
-		public float startTime;
+		public int startTime;
 		public string comment;
 		public string enemyName;
 		public float positionX;

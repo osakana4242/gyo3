@@ -13,7 +13,7 @@ namespace Osakana4242.Content.Inners {
 
 	[System.Serializable]
 	public class Wave {
-		public float startTime;
+		public Msec startTime;
 		public WaveData data;
 
 		public float debugStartTime;
@@ -40,7 +40,7 @@ namespace Osakana4242.Content.Inners {
 
 		public void Clear() {
 			data = WaveData.Empty;
-			startTime = 0;
+			startTime = Msec.Zero;
 			eventIndex_ = 0;
 			isEnd_ = false;
 			enemyIds.Clear();
@@ -67,7 +67,6 @@ namespace Osakana4242.Content.Inners {
 			if (isEnd_)
 				Debug.Log($"wave is end: {isEnd_}");
 		}
-
 		void UpdateEvents() {
 			var preTime = Stage.Current.time.preTime;
 			var time = Stage.Current.time.time;
@@ -77,11 +76,10 @@ namespace Osakana4242.Content.Inners {
 				if (row.type == WaveEventType.None)
 					continue;
 
-				var eventStartTime = startTime + (row.startTime / 1000f);
-				var isEnter = TimeEvent.IsEnter(eventStartTime, preTime, time);
-				Debug.Log($"index: {eventIndex_}, eventStartTime: {eventStartTime}, isEnter: {isEnter}");
+				var eventStartTime = startTime + Msec.FromMsec(row.startTime);
+				TimeEvent.TryGetEvent(eventStartTime, preTime, time, out var timeEvent);
 
-				if (!isEnter)
+				if (timeEvent.type != TimeEventType.Enter)
 					return;
 
 				switch (row.type) {
