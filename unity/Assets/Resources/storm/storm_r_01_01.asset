@@ -17,3 +17,19 @@ MonoBehaviour:
     i0: 1
     s0: 
     so0: {fileID: 11400000, guid: 6c92d8b8794d446498d9fab0059e900e, type: 2}
+  - type: 4
+    i0: 10000
+    s0: 
+    so0: {fileID: 0}
+  - type: 5
+    i0: 1
+    s0: 
+    so0: {fileID: 11400000, guid: 7d2918992a3651c44895bf744b48f624, type: 2}
+  - type: 4
+    i0: 1000
+    s0: 
+    so0: {fileID: 0}
+  - type: 1
+    i0: 0
+    s0: 
+    so0: {fileID: 11400000, guid: 852e420e8e674b54695f0319c35a76c2, type: 2}
