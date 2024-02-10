@@ -68,41 +68,52 @@ namespace Osakana4242.Lib.AssetServices {
 		}
 
 		public async UniTask<T> GetAsync<T>(CancellationToken cancellationToken) where T : UnityEngine.Object {
-			if (!IsNeedLoadStart())
-				return await GetFromCachedAsync<T>(cancellationToken);
-			return await GetFromFileAsync<T>(cancellationToken);
+			AddWatcher();
+			try {
+				await WaitLoadingAsync(cancellationToken);
+
+				if (!IsNeedLoadStart())
+					return await GetFromCachedAsync<T>(cancellationToken);
+
+				return await GetFromFileAsync<T>(cancellationToken);
+			} finally {
+				RemoveWatcher();
+			}
 		}
 
 		async UniTask<T> GetFromFileAsync<T>(CancellationToken cancellationToken) where T : UnityEngine.Object {
 			loading_ = true;
-			AddWatcher();
 			try {
 				var asset = await GetAsyncCore<T>(info, cancellationToken);
 				SetAsset(asset);
 				return asset;
 			} catch (OperationCanceledException) {
 				throw;
-			} catch (System.Exception ex) {
+			} catch (Exception ex) {
 				ex_ = ex;
 				throw ex;
 			} finally {
-				RemoveWatcher();
 				loading_ = false;
 			}
 		}
 
 		async UniTask<T> GetFromCachedAsync<T>(CancellationToken cancellationToken) {
-			AddWatcher();
-			try {
-				while (loading_) {
-					cancellationToken.ThrowIfCancellationRequested();
-					await UniTask.Delay(1);
-				}
-				var asset1 = GetAsset<T>();
-				return asset1;
-			} finally {
-				RemoveWatcher();
+			while (loading_) {
+				cancellationToken.ThrowIfCancellationRequested();
+				await UniTask.Delay(DebugLoadingDuration);
+			}
+			cancellationToken.ThrowIfCancellationRequested();
+			var asset1 = GetAsset<T>();
+			return asset1;
+		}
+
+		async UniTask WaitLoadingAsync(CancellationToken cancellationToken) {
+			cancellationToken.ThrowIfCancellationRequested();
+			while (loading_) {
+				await UniTask.Delay(DebugLoadingDuration);
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 		}
+
 	}
 }
