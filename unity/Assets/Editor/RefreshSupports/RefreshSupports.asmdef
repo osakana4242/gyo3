@@ -1,0 +1,16 @@
+{
+    "name": "RefreshSupports",
+    "rootNamespace": "RefreshSupports",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [
+        "Editor"
+    ],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
