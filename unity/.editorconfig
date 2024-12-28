@@ -27,7 +27,7 @@ csharp_indent_block_contents = true
 csharp_indent_braces = false
 csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = true
-csharp_indent_switch_labels = true
+csharp_indent_switch_labels = false
 csharp_indent_labels = flush_left
 
 # Prefer "var" everywhere
@@ -80,7 +80,6 @@ csharp_space_between_square_brackets = false
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
-
 # for unity
 ## new ()
 dotnet_diagnostic.IDE0017.severity = none
