@@ -8,8 +8,8 @@ namespace RefreshSupports {
 	/// Auto Refresh がオフのとき限定。
 	/// </summary>
 	[InitializeOnLoad]
-	sealed class RefreshInExitingEditMode {
-		static RefreshInExitingEditMode() {
+	sealed class RefreshBeforePlayMode {
+		static RefreshBeforePlayMode() {
 			// Debug.Log($"{nameof(RefreshInExitingEditMode)}, isPlayingOrWillChangePlaymode: {EditorApplication.isPlayingOrWillChangePlaymode}, AutoRefreshDisabled: {AutoRefreshDisabled()}");
 			EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 		}
@@ -44,7 +44,7 @@ namespace RefreshSupports {
 			}
 			switch (playModeStateChange) {
 			case PlayModeStateChange.ExitingEditMode:
-				Debug.Log($"Refresh By {nameof(RefreshInExitingEditMode)}");
+				Debug.Log($"Refresh By {nameof(RefreshBeforePlayMode)}");
 				AssetDatabase.Refresh();
 				break;
 			}

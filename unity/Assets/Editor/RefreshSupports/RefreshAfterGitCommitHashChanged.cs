@@ -36,26 +36,35 @@ namespace RefreshSupports {
 			const string keyAutoRefresh = "kAutoRefresh_h2404942332";
 			if (EditorPrefs.HasKey(keyAutoRefresh)) {
 				var autoRefresh = EditorPrefs.GetBool(keyAutoRefresh);
-				return autoRefresh;
+				return !autoRefresh;
 			}
 #endif
 			return false;
 		}
 
-		static (GitCommitHash prev, GitCommitHash current) WriteCommitHashIfNeeded() {
+		static (GitCommitInfo prev, GitCommitInfo current) WriteCommitHashIfNeeded() {
 			if (!Enabled) {
 				return (default, default);
 			}
 			var path = $"Temp/{nameof(RefreshAfterGitCommitHashChanged)}_commit_hash.txt";
-			var prev = default(GitCommitHash);
+			var prev = default(GitCommitInfo);
 			if (System.IO.File.Exists(path)) {
-				prev = new GitCommitHash(System.IO.File.ReadAllText(path));
+				var lines = System.IO.File.ReadAllLines(path);
+				var commitHash = (lines.Length <= 0) ? default : new GitCommitHash(lines[0]);
+				var branch     = (lines.Length <= 1) ? default : lines[1];
+				prev = new GitCommitInfo(commitHash, branch);
 			}
-			if (!GitCommand.TryGetCommitHash(out var current)) {
-				current = prev;
+			var current = prev;
+			{
+				if (GitCommand.TryGetCommitHash(out var commitHash)) {
+					GitCommand.TryGetBranch(out var branch);
+					current = new GitCommitInfo(commitHash, branch);
+				}
 			}
-			if (prev.value != current.value) {
-				var text = $"{current.value}\n";
+			if (prev.commitHash.value != current.commitHash.value) {
+				var text =
+					$"{current.commitHash.value}\n" +
+					$"{current.branch}\n";
 				System.IO.File.WriteAllText(path, text);
 			}
 			return (prev, current);
@@ -66,18 +75,18 @@ namespace RefreshSupports {
 				return;
 			}
 			var r = WriteCommitHashIfNeeded();
-			if (r.prev.IsEmpty()) {
+			if (r.prev.commitHash.IsEmpty()) {
 				return;
 			}
-			if (r.prev.value == r.current.value) {
+			if (r.prev.commitHash.value == r.current.commitHash.value) {
 				return;
 			}
 			var isOk = EditorUtility.DisplayDialog(
 				title: $"{nameof(RefreshAfterGitCommitHashChanged)}",
 				message: $"git コミットハッシュの変更を検知しました。\n" +
 				$"\n" +
-				$"前回: {r.prev.ShortHash}\n" +
-				$"今回: {r.current.ShortHash}\n" +
+				$"前回: {r.prev.toOneline()}\n" +
+				$"今回: {r.current.toOneline()}\n" +
 				$"\n" +
 				$"Refresh します。",
 				ok: "OK",
@@ -103,10 +112,16 @@ namespace RefreshSupports {
 		}
 
 		static void OnFocus() {
+			if (EditorApplication.isPlaying) {
+				return;
+			}
 			ConfirmRefreshIfNeeded();
 		}
 
 		static void OnUnfocus() {
+			if (EditorApplication.isPlaying) {
+				return;
+			}
 			WriteCommitHashIfNeeded();
 		}
 
@@ -129,6 +144,18 @@ namespace RefreshSupports {
 					return false;
 				}
 				commitHash = new GitCommitHash(result);
+				return true;
+			}
+
+			public static bool TryGetBranch(out string branch) {
+				// "branch --show-current" は git version 2.22.0以降から対応.
+				// "rev-parse ..." の方が確実.
+				var gitCommand = "rev-parse --abbrev-ref HEAD";
+				if ( !TryGetStandardOutputFromProcess(gitCommand, out var str) ) {
+					branch = default;
+					return false;
+				}
+				branch = str.Trim().Trim('\'', '\n');
 				return true;
 			}
 
@@ -196,6 +223,20 @@ namespace RefreshSupports {
 				value.Substring(0, 8);
 
 			public override string ToString() => value;
+		}
+
+		readonly struct GitCommitInfo {
+			public readonly GitCommitHash commitHash;
+			public readonly string branch;
+
+			public GitCommitInfo(GitCommitHash commitHash, string branch) {
+				this.commitHash = commitHash;
+				this.branch = branch;
+			}
+
+			public string toOneline() => string.IsNullOrEmpty( branch ) ?
+				$"{commitHash.ShortHash}" :
+				$"{commitHash.ShortHash} [{branch}]";
 		}
 	}
 }
