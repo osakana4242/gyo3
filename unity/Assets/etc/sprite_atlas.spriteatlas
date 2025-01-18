@@ -40,6 +40,7 @@ SpriteAtlas:
     - 2856fd6084de7864c8fed3052648b26b: 21300000
     - ff3f0c21ecccac047b0400d1a5a9e875: 21300000
     - 5e7e6453489256442a12bacaa17db0d2: 21300000
+    - e3bd5844855846244ade116b1c1531bc: 21300000
     - e74be674ff3f0b44d8388f52a911b771: 21300000
     - 33d5311c58d54874eb838f813fd5e8ce: 3965576215479502352
     - 33d5311c58d54874eb838f813fd5e8ce: 9201947105047591241
@@ -57,6 +58,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2856fd6084de7864c8fed3052648b26b, type: 3}
   - {fileID: 21300000, guid: ff3f0c21ecccac047b0400d1a5a9e875, type: 3}
   - {fileID: 21300000, guid: 5e7e6453489256442a12bacaa17db0d2, type: 3}
+  - {fileID: 21300000, guid: e3bd5844855846244ade116b1c1531bc, type: 3}
   - {fileID: 21300000, guid: e74be674ff3f0b44d8388f52a911b771, type: 3}
   - {fileID: 3965576215479502352, guid: 33d5311c58d54874eb838f813fd5e8ce, type: 3}
   - {fileID: 9201947105047591241, guid: 33d5311c58d54874eb838f813fd5e8ce, type: 3}
@@ -73,6 +75,7 @@ SpriteAtlas:
   - tex_rect_x32
   - tex_enemy_01_f_01
   - tex_blt_01_f_01
+  - tex_enemy_02_f_01
   - tex_player_f_01
   - tex_blast_01_8
   - tex_blast_01_0

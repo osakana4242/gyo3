@@ -16,6 +16,7 @@ namespace Osakana4242.Content.Inners {
 			{ "enemy_3".ToHashKey_Ext(), _ => CharaAIs.Enemy3.instance_g },
 			{ "enemy_4".ToHashKey_Ext(), _ => CharaAIs.Enemy4.instance_g },
 			{ "enemy_5".ToHashKey_Ext(), _ => new CharaAIs.Enemy5() },
+			{ "enemy_6".ToHashKey_Ext(), _ => CharaAIs.Enemy6.instance_g },
 		};
 		static readonly System.Func<Chara, ICharaComponent> emptyFunc_g_ = (_) => CharaAIs.Empty.instance_g;
 		public static readonly AIName Empty = new AIName();
