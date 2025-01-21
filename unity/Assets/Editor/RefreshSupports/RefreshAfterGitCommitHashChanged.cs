@@ -170,7 +170,7 @@ namespace RefreshSupports {
 					break;
 				case RuntimePlatform.WindowsEditor:
 					exePaths = new string[] {
-						@$"{System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)}\AppData\Local\Atlassian\SourceTree\git_local\bin\git.exe",
+						$@"{System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)}\AppData\Local\Atlassian\SourceTree\git_local\bin\git.exe",
 						"git",
 					};
 					break;
